@@ -10,8 +10,8 @@ import primitives.Vector;
  * @author Lior Peretz
  */
 public class Sphere implements Geometry {
-    Point3D _center;//the center point of the sphere
-    double _radius;//sphere's radius
+    final Point3D _center;//the center point of the sphere
+    final double _radius;//sphere's radius
 
     /**
      * Sphere constructor receiving radius (double) and Point3D

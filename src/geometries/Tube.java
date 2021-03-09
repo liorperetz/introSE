@@ -11,8 +11,8 @@ import primitives.Vector;
  * @author Lior Peretz
  */
 public class Tube implements Geometry {
-    Ray _axisRay;//tube's axis
-    double _radius;//tube's radius
+    final Ray _axisRay;//tube's axis
+    final double _radius;//tube's radius
 
     /**
      * Tube constructor receiving radius (double) and Ray
@@ -35,10 +35,18 @@ public class Tube implements Geometry {
                 ", radius=" + _radius;
     }
 
+    /**
+     * getter
+     * @return the axis of the tube
+     */
     public Ray getAxisRay() {
         return _axisRay;
     }
 
+    /**
+     * getter
+     * @return the radius of the tube
+     */
     public double getRadius() {
         return _radius;
     }

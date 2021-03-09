@@ -8,8 +8,8 @@ package primitives;
  */
 public class Ray {
 
-    Point3D _p0;//beginning point
-    Vector _dir;//direction vector
+    final Point3D _p0;//beginning point
+    final Vector _dir;//direction vector
 
     /**
      * Ray constructor receiving Point3D and Vector

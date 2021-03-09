@@ -9,8 +9,8 @@ import primitives.Vector;
  * @author Lior Peretz
  */
 public class Plane implements Geometry  {
-    Point3D _p;//point in the plane
-    Vector _normal;//normal vector to the plane
+    final Point3D _p;//point in the plane
+    final Vector _normal;//normal vector to the plane
 
     /**
      * Plane constructor receiving 3 Point3D objects
@@ -29,8 +29,8 @@ public class Plane implements Geometry  {
      * @param normal perpendicular vector to the plane
      */
     public Plane(Point3D p, Vector normal) {
-        this._p = p;
-        this._normal = normal;
+        _p = p;
+        _normal = normal;
 
     }
 
@@ -39,10 +39,18 @@ public class Plane implements Geometry  {
         return null;
     }
 
+    /**
+     * getter
+     * @return p, point in the plane
+     */
     public Point3D getP() {
         return _p;
     }
 
+    /**
+     * getter
+     * @return normal vector to the plane
+     */
     public Vector getNormal() {
         return _normal;
     }

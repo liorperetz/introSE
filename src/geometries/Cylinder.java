@@ -12,7 +12,7 @@ import primitives.Vector;
  * @author Lior Peretz
  */
 public class Cylinder extends Tube {
-    double _height;//cylinder's height
+   final double _height;//cylinder's height
 
     /**
      * Cylinder constructor receiving radius (double), Ray and height (double)
@@ -35,6 +35,10 @@ public class Cylinder extends Tube {
         return super.toString() + ",height=" + _height;
     }
 
+    /**
+     * getter
+     * @return the cylinder height
+     */
     public double getHeight() {
         return _height;
     }
