@@ -15,6 +15,8 @@ public class Vector {
      * @param head the head of the vector
      */
     public Vector(Point3D head) {
+        if (head.equals(Point3D.ZERO)) //(0,0,0) is illegal vector
+            throw new IllegalArgumentException("vector cannot be point(0,0,0)");
         this._head = new Point3D(head._x.coord, head._y.coord, head._z.coord);
     }
 
@@ -25,10 +27,8 @@ public class Vector {
      * @param z coordinate for z axis
      */
     public Vector(Coordinate x, Coordinate y, Coordinate z) {
-        Point3D p = new Point3D(x, y, z);
-        if (p.equals(Point3D.ZERO)) //(0,0,0) is illegal vector
-            throw new IllegalArgumentException("vector cannot be point(0,0,0)");
-        _head = p;
+
+        this(new Point3D(x, y, z));
     }
 
     /**
@@ -38,7 +38,8 @@ public class Vector {
      * @param z coordinate for z axis
      */
     public Vector(double x, double y, double z) {
-        this(new Coordinate(x), new Coordinate(y), new Coordinate(z));
+
+        this(new Point3D(x,y,z));
     }
 
     /**
@@ -46,6 +47,7 @@ public class Vector {
      * @return reference to point3D representing the vector's head
      */
     public Point3D getHead() {
+
         return new Point3D(_head._x, _head._y, _head._z);
     }
 
@@ -69,21 +71,21 @@ public class Vector {
      */
     public Vector add(Vector vector) {
 
-        return new Vector(this._head._x.coord + vector._head._x.coord,
-                this._head._y.coord + vector._head._y.coord,
-                this._head._z.coord + vector._head._z.coord);
+        return new Vector(_head._x.coord + vector._head._x.coord,
+                _head._y.coord + vector._head._y.coord,
+                _head._z.coord + vector._head._z.coord);
     }
 
     /**
-     * subtract the current vector from another vector
-     * @param vector the minuend vector
+     * subtract another vector from the current vector
+     * @param vector the subtrahend vector
      * @return reference to Vector representing the subtraction result
      */
     public Vector subtract(Vector vector) {
 
-        return new Vector(vector._head._x.coord - this._head._x.coord,
-                vector._head._y.coord - this._head._y.coord,
-                vector._head._z.coord - this._head._z.coord);
+        return new Vector(_head._x.coord - vector._head._x.coord,
+                _head._y.coord - vector._head._y.coord,
+                _head._z.coord - vector._head._z.coord);
     }
 
     /**
@@ -92,9 +94,9 @@ public class Vector {
      * @return reference to Vector representing the multiplication result
      */
     public Vector scale(double number) {
-        return new Vector(this._head._x.coord * number,
-                this._head._y.coord * number,
-                this._head._z.coord * number
+        return new Vector(_head._x.coord * number,
+                _head._y.coord * number,
+                _head._z.coord * number
         );
     }
 
@@ -104,9 +106,9 @@ public class Vector {
      * @return the dot product result
      */
     public double dotProduct(Vector vector) {
-        return (this._head._x.coord * vector._head._x.coord +
-                this._head._y.coord * vector._head._y.coord +
-                this._head._z.coord * vector._head._z.coord);
+        return (_head._x.coord * vector._head._x.coord +
+                _head._y.coord * vector._head._y.coord +
+                _head._z.coord * vector._head._z.coord);
     }
 
     /**
@@ -115,9 +117,9 @@ public class Vector {
      * @return reference to Vector representing the cross product result
      */
     public Vector crossProduct(Vector vector) {
-        return new Vector(this._head._y.coord * vector._head._z.coord - this._head._z.coord * vector._head._y.coord,
-                this._head._z.coord * vector._head._x.coord - this._head._x.coord * vector._head._z.coord,
-                this._head._x.coord * vector._head._y.coord - this._head._y.coord * vector._head._x.coord
+        return new Vector(_head._y.coord * vector._head._z.coord - _head._z.coord * vector._head._y.coord,
+                _head._z.coord * vector._head._x.coord - _head._x.coord * vector._head._z.coord,
+                _head._x.coord * vector._head._y.coord - _head._y.coord * vector._head._x.coord
 
         );
     }
@@ -127,9 +129,9 @@ public class Vector {
      * @return vector's squared length
      */
     public double lengthSquared() {
-        return (this._head._x.coord * this._head._x.coord +
-                _head._y.coord * this._head._y.coord +
-                _head._z.coord * this._head._z.coord);
+        return (_head._x.coord * _head._x.coord +
+                _head._y.coord * _head._y.coord +
+                _head._z.coord * _head._z.coord);
     }
 
     /**
@@ -145,8 +147,8 @@ public class Vector {
      * @return reference to normalized vector
      */
     public Vector normalize() {
-        this._head = new Point3D(this._head._x.coord / length(), this._head._y.coord / length(),
-                this._head._z.coord / length());
+        this._head = new Point3D(_head._x.coord / length(), _head._y.coord / length(),
+                _head._z.coord / length());
         return this;
     }
 
