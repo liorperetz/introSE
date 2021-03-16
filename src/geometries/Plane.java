@@ -31,8 +31,9 @@ public class Plane implements Geometry  {
      * @param normal normal vector to the plane
      */
     public Plane(Point3D p, Vector normal) {
+
         _p = p;
-        _normal = normal;
+        _normal = normal.normalized();
 
     }
 

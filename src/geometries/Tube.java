@@ -5,6 +5,8 @@ import primitives.Ray;
 import primitives.Util;
 import primitives.Vector;
 
+import static primitives.Util.isZero;
+
 /**
  * class Tube representing a tube in a 3D cartesian coordinate system
  *
@@ -32,17 +34,19 @@ public class Tube implements Geometry {
      */
     @Override
     public Vector getNormal(Point3D p) {
-        Vector p0toP_vector=p.subtract(_axisRay.getP0());//vector from the beginning point to p
-        Point3D o;//o is the intersection point between the tube's axis and orthogonal line between o to p.
-        if(Util.isZero(p0toP_vector.dotProduct(_axisRay.getDir()))) {//if p0toP_vector orthogonal to tube's axis it means that o is p0
-            o = _axisRay.getP0();
+
+        Vector p0toP=p.subtract(_axisRay.getP0());//vector from the beginning point of the ray to p
+        double t=_axisRay.getDir().dotProduct(p0toP);//Length of the projection of p0toP on the ray direction vector
+
+        if(isZero(t)){//if t=0 o is actually p0
+            return p.subtract(_axisRay.getP0()).normalize();
         }
-        else {
-            double projectionLength = _axisRay.getDir().dotProduct(p0toP_vector);//Length of the projection of p0toP_vector on the ray direction vector
-            Vector projection = _axisRay.getDir().scale(projectionLength);//projection of p0toP_vector on the ray direction vector
-            o = _axisRay.getP0().add(projection);
-        }
+
+        Vector v=_axisRay.getDir().scale(t);//vector from p0 to o
+        Point3D o=_axisRay.getP0().add(v);//o=p0+t*v
+
         return p.subtract(o).normalize();
+
     }
 
     @Override

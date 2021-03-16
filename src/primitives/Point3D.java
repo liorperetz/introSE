@@ -72,8 +72,10 @@ public class Point3D {
      * @return reference to vector from p1 to current point
      */
     public Vector subtract(Point3D p1) {
+
         if (p1.equals((this))) //subtraction between identical points gives illegal vector (0,0,0)
             throw new IllegalArgumentException("cannot create vector to point (0,0,0)");
+
         return new Vector(new Point3D(_x.coord - p1._x.coord,
                 _y.coord - p1._y.coord,
                 _z.coord - p1._z.coord)

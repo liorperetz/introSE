@@ -4,6 +4,8 @@ import primitives.Point3D;
 import primitives.Ray;
 import primitives.Vector;
 
+import static primitives.Util.isZero;
+
 /**
  * class Cylinder representing a cylinder in a 3D cartesian coordinate system
  * the class inherit from Tube
@@ -28,7 +30,7 @@ public class Cylinder extends Tube {
     @Override
     public Vector getNormal(Point3D p) {
         return null;
-    }
+        }
 
     @Override
     public String toString() {
