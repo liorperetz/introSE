@@ -73,9 +73,7 @@ class VectorTest {
             System.out.println("ERROR: dotProduct() wrong value");
         }
 
-        // =============== Boundary Values Tests ==================
-
-        //Test that do product between orthogonal vectors is zero
+        //Test that dot product between orthogonal vectors is zero
         double dotRes=v1.dotProduct(v3);
         assertEquals(0,alignZero(dotRes),"ERROR: dotProduct() for orthogonal vectors is not zero");
     }
@@ -111,6 +109,9 @@ class VectorTest {
      * Test method for {@link primitives.Vector#lengthSquared()}
      */
     void lengthSquared() {
+
+        // ============ Equivalence Partitions Tests ==============
+
         double v1SquaredLength=v1.lengthSquared();
         //Test that length return correct squared length
         assertEquals(14,v1SquaredLength,"lengthSquared() return incorrect value");
@@ -121,8 +122,11 @@ class VectorTest {
      * Test method for {@link primitives.Vector#length()}
      */
     void length() {
+
+        // ============ Equivalence Partitions Tests ==============
+
         double v1Length=v1.length();
-        //Test that length return correct length
+        //Test that length() return correct length
         assertEquals(14,v1Length*v1Length,"length() return incorrect value");
     }
 
@@ -131,6 +135,9 @@ class VectorTest {
      */
     @Test
     void normalize() {
+
+        // ============ Equivalence Partitions Tests ==============
+
         Vector v = new Vector(1, 2, 3);
         Vector vNormalize = v.normalize();
 
@@ -147,6 +154,9 @@ class VectorTest {
      * Test method for {@link primitives.Vector#normalized()}
      */
     void normalized() {
+
+        // ============ Equivalence Partitions Tests ==============
+
         Vector v = new Vector(1, 2, 3);
         Vector u=v.normalized();
 

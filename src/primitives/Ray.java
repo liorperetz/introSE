@@ -34,4 +34,20 @@ public class Ray {
         return "p0=" + _p0.toString() +
                 ", dir=" + _dir.toString();
     }
+
+    /**
+     * getter
+     * @return beginning point of the ray
+     */
+    public Point3D getP0() {
+        return _p0;
+    }
+
+    /**
+     * getter
+     * @return direction vector of the ray
+     */
+    public Vector getDir() {
+        return _dir;
+    }
 }

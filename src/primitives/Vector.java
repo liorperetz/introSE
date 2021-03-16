@@ -147,7 +147,7 @@ public class Vector {
      * @return reference to normalized vector
      */
     public Vector normalize() {
-        this._head = new Point3D(_head._x.coord / length(), _head._y.coord / length(),
+        _head = new Point3D(_head._x.coord / length(), _head._y.coord / length(),
                 _head._z.coord / length());
         return this;
     }
@@ -157,7 +157,7 @@ public class Vector {
      * @return reference to normalized vector
      */
     public Vector normalized() {
-        return new Vector(normalize()._head);
+        return new Vector(_head).normalize();
     }
 
 }

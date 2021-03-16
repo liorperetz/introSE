@@ -2,6 +2,7 @@ package geometries;
 
 import primitives.Point3D;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 /**
@@ -24,9 +25,24 @@ public class Tube implements Geometry {
         this._axisRay = _axisRay;
     }
 
+    /**
+     *
+     * @param p point on the surface
+     * @return normal to the tube from p
+     */
     @Override
     public Vector getNormal(Point3D p) {
-        return null;
+        Vector p0toP_vector=p.subtract(_axisRay.getP0());//vector from the beginning point to p
+        Point3D o;//o is the intersection point between the tube's axis and orthogonal line between o to p.
+        if(Util.isZero(p0toP_vector.dotProduct(_axisRay.getDir()))) {//if p0toP_vector orthogonal to tube's axis it means that o is p0
+            o = _axisRay.getP0();
+        }
+        else {
+            double projectionLength = _axisRay.getDir().dotProduct(p0toP_vector);//Length of the projection of p0toP_vector on the ray direction vector
+            Vector projection = _axisRay.getDir().scale(projectionLength);//projection of p0toP_vector on the ray direction vector
+            o = _axisRay.getP0().add(projection);
+        }
+        return p.subtract(o).normalize();
     }
 
     @Override

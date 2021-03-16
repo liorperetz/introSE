@@ -20,13 +20,15 @@ public class Plane implements Geometry  {
      */
     public Plane(Point3D p1, Point3D p2, Point3D p3) {
         _p= p1;//point in the plane
-        _normal=null;//normal vector to the plane
+        Vector v1=p1.subtract(p2);
+        Vector v2=p1.subtract(p3);
+        _normal=v1.crossProduct(v2).normalize();
     }
 
     /**
      * Plane constructor receiving Vector and Point3D
      * @param p point in the plane
-     * @param normal perpendicular vector to the plane
+     * @param normal normal vector to the plane
      */
     public Plane(Point3D p, Vector normal) {
         _p = p;
@@ -34,9 +36,14 @@ public class Plane implements Geometry  {
 
     }
 
+    /**
+     *
+     * @param p point on the surface
+     * @return normal vector to the plane
+     */
     @Override
     public Vector getNormal(Point3D p) {
-        return null;
+        return _normal;
     }
 
     /**

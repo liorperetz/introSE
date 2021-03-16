@@ -23,9 +23,14 @@ public class Sphere implements Geometry {
         this._center = _center;
     }
 
+    /**
+     *
+     * @param p point on the sphere
+     * @return normal vector to the sphere from point p
+     */
     @Override
     public Vector getNormal(Point3D p) {
-        return null;
+        return p.subtract(_center).normalize();
     }
 
     @Override
