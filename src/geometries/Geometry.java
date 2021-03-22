@@ -9,7 +9,7 @@ import primitives.Vector;
  * @author Reuven Klein
  * @author Lior Peretz
  */
-public interface Geometry {
+public interface Geometry extends Intersectable {
     /**
      * get the normal vector to surface in a point
      * @param p point on the surface

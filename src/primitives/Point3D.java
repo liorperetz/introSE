@@ -55,7 +55,6 @@ public class Point3D {
                 _z.equals(point3D._z);
     }
 
-
     @Override
     public String toString() {
         return "(" +

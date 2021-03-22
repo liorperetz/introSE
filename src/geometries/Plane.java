@@ -1,7 +1,11 @@
 package geometries;
 
 import primitives.Point3D;
+import primitives.Ray;
 import primitives.Vector;
+
+import java.util.List;
+
 /**
  * class Plane representing a plane in a 3D cartesian coordinate system
  *
@@ -69,5 +73,15 @@ public class Plane implements Geometry  {
                 "p=" + _p.toString() +
                 ", normal=" + _normal.toString() +
                 '}';
+    }
+
+    /**
+     * find intersections points of ray with a plane
+     * @param ray ray in 3d space
+     * @return list of intersections points of the ray with the plane
+     */
+    @Override
+    public List<Point3D> findIntersections(Ray ray) {
+        return null;
     }
 }

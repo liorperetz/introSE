@@ -30,7 +30,7 @@ public class Cylinder extends Tube {
     @Override
     public Vector getNormal(Point3D p) {
         return null;
-        }
+    }
 
     @Override
     public String toString() {

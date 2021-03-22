@@ -5,6 +5,8 @@ import primitives.Ray;
 import primitives.Util;
 import primitives.Vector;
 
+import java.util.List;
+
 import static primitives.Util.isZero;
 
 /**
@@ -69,6 +71,16 @@ public class Tube implements Geometry {
      */
     public double getRadius() {
         return _radius;
+    }
+
+    /**
+     * find intersections points of ray with a plane
+     * @param ray ray in 3d space
+     * @return list of intersections points of the ray with the plane
+     */
+    @Override
+    public List<Point3D> findIntersections(Ray ray) {
+        return null;
     }
 }
 

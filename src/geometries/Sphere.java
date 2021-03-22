@@ -1,7 +1,10 @@
 package geometries;
 
 import primitives.Point3D;
+import primitives.Ray;
 import primitives.Vector;
+
+import java.util.List;
 
 /**
  * class Sphere representing a sphere in a 3D cartesian coordinate system
@@ -39,6 +42,15 @@ public class Sphere implements Geometry {
                 "_center=" + _center.toString() +
                 ", _radius=" + _radius +
                 '}';
+    }
+    /**
+     * find intersections points of ray with a sphere
+     * @param ray ray in 3d space
+     * @return list of intersections points of the ray with the sphere
+     */
+    @Override
+    public List<Point3D> findIntersections(Ray ray) {
+        return null;
     }
 }
 
