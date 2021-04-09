@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package geometries;
 
 
@@ -9,8 +7,9 @@ import geometries.*;
 import org.junit.jupiter.api.Test;
 import primitives.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testing Polygons
@@ -95,4 +94,46 @@ public class PolygonTest {
         assertEquals( new Vector(sqrt3, sqrt3, sqrt3), pl.getNormal(new Point3D(0, 0, 1)),"Bad normal to trinagle");
     }
 
+    /**
+     * Test method for {@link geometries.Polygon#findIntersections(primitives.Ray)}.
+     */
+    @Test
+    void findIntersections() {
+
+        Polygon polygon=new Polygon(new Point3D(1,1,0),new Point3D(1,-1,0),
+                new Point3D(0,-1,1),new Point3D(0,1,1));
+        List<Point3D> result;
+
+        // ============ Equivalence Partitions Tests ==============
+        // in all cases we assume the ray intersects the polygon's plane
+
+        // TC01: The ray intersects the polygon  (1 point)
+        Point3D p1 = new Point3D(0.75, 0.5, 0.25);
+        result = polygon.findIntersections(new Ray(new Point3D(0.5, 0.5, 0),
+                new Vector(1, 0, 1)));
+        assertEquals(1, result.size(), "Wrong number of points");
+        assertEquals(List.of(p1), result, "wrong intersection point");
+
+        // TC02: The ray intersects outside the polygon against an edge
+        assertNull(polygon.findIntersections(new Ray(new Point3D(0, 2, 0),
+                new Vector(1, 0, 1))), "Ray does not intersect the polygon");
+
+        // TC03:The ray intersects outside the polygon against a vertex
+        assertNull(polygon.findIntersections(new Ray(new Point3D(-2, 2, 0),
+                new Vector(1, 0, 1))), "Ray does not intersect the polygon");
+
+        // =============== Boundary Values Tests ==================
+
+        // TC11: Ray intersects the polygon's edge
+        assertNull(polygon.findIntersections(new Ray(new Point3D(-1, 0.5, 0),
+                new Vector(1, 0, 1))), "Ray does not intersect the polygon");
+
+        // TC12: Ray intersects a vertex
+        assertNull(polygon.findIntersections(new Ray(new Point3D(-1, 1, 0),
+                new Vector(1, 0, 1))), "Ray does not intersect the polygon");
+
+        // TC13: Ray intersects edge's continuation
+        assertNull(polygon.findIntersections(new Ray(new Point3D(-1, 2, 0),
+                new Vector(1, 0, 1))), "Ray does not intersect the polygon");
+    }
 }

@@ -30,7 +30,7 @@ public class Tube implements Geometry {
     }
 
     /**
-     *
+     * normal to the the tube from point on it
      * @param p point on the surface
      * @return normal to the tube from p
      */

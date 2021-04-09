@@ -27,9 +27,42 @@ public class Cylinder extends Tube {
         this._height = _height;
     }
 
+    /**
+     * normal to the the cylinder from point on it
+     * @param p point on the surface
+     * @return normal vector to the cylinder from p
+     *
+     * Mathematical principle:
+     * if dot product between the axis ray direction vector (v)
+     * to a vector from the beginning axis ray to p (t) gives the cylinder height
+     * or 0, it means that p is on one of the bases.
+     * in other case we set o to p0+vt and the normal is p-o
+     */
     @Override
     public Vector getNormal(Point3D p) {
-        return null;
+
+        Point3D p0=_axisRay.getP0();
+        Vector v=_axisRay.getDir();
+
+        if(p.equals(p0)){//p is on the base
+            return v.scale(-1);
+        }
+
+        Vector pMinusp0=p.subtract(p0);
+        double t=v.dotProduct(pMinusp0);
+
+        if(t==0){
+
+            return v.scale(-1);
+        }
+        if(t==_height){
+
+            return v;
+        }
+
+        Point3D o= _axisRay.getPoint(t);
+        return p.subtract(o).normalize();
+
     }
 
     @Override

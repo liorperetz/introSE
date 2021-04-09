@@ -50,4 +50,17 @@ public class Ray {
     public Vector getDir() {
         return _dir;
     }
+
+    /**
+     * Calculate the value of a point
+     * that is a finite distance from the starting point
+     * of the ray and in the direction of the ray
+     *
+     * @param t finite distance from p0
+     * @return reference to Point3D representing the new point value
+     */
+    public Point3D getPoint(double t){
+
+        return _p0.add(_dir.scale(t));
+    }
 }

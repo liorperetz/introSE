@@ -120,7 +120,17 @@ public class Point3D {
         return Math.sqrt(distanceSquared(p1, p2));
     }
 
+    public double getX() {
+        return _x.coord;
+    }
 
+    public double getY() {
+        return _y.coord;
+    }
+
+    public double getZ() {
+        return _z.coord;
+    }
 }
 
 
