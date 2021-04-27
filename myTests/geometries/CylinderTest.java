@@ -6,7 +6,12 @@ import primitives.Ray;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Testing Cylinder
+ *
+ * @author Lior Peretz
+ * @author Reuven Klein
+ */
 class CylinderTest {
 
     /**

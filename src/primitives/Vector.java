@@ -153,7 +153,7 @@ public class Vector {
     }
 
     /**
-     * normalize the current vector (doess not change the vector)
+     * normalize the current vector (does not change the vector)
      * @return reference to normalized vector
      */
     public Vector normalized() {
