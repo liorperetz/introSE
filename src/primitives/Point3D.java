@@ -98,26 +98,24 @@ public class Point3D {
     /**
      * calculate the Euclidean squared distance between two 3D points
      *
-     * @param p1 a 3D point
-     * @param p2 a 3D point
-     * @return Euclidean squared distance between p1 and p2
+     * @param p a 3D point
+     * @return Euclidean squared distance between current instance and p
      */
 
-    public double distanceSquared(Point3D p1, Point3D p2) {
-        return ((p1._x.coord - p2._x.coord) * (p1._x.coord - p2._x.coord) +
-                (p1._y.coord - p2._y.coord) * (p1._y.coord - p2._y.coord) +
-                (p1._z.coord - p2._z.coord) * (p1._z.coord - p2._z.coord));
+    public double distanceSquared(Point3D p) {
+        return ((_x.coord - p._x.coord) * (_x.coord - p._x.coord) +
+                (_y.coord - p._y.coord) * (_y.coord - p._y.coord) +
+                (_z.coord - p._z.coord) * (_z.coord - p._z.coord));
     }
 
     /**
      * calculate the Euclidean distance between two 3D points
      *
-     * @param p1 a 3D point
-     * @param p2 a 3D point
-     * @return Euclidean distance between p1 and p2
+     * @param p a 3D point
+     * @return Euclidean distance between current instance to p
      */
-    public double distance(Point3D p1, Point3D p2) {
-        return Math.sqrt(distanceSquared(p1, p2));
+    public double distance(Point3D p) {
+        return Math.sqrt(distanceSquared(p));
     }
 
     public double getX() {

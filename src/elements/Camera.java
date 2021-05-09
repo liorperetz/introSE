@@ -80,10 +80,10 @@ public class Camera {
     }
 
     /**
-     * setter to the view plane width and length
+     * setter to the view plane width and length (chaining method)
      * @param width width of the view plane
      * @param height length of the view plane
-     * @return current Camera object (builder design pattern)
+     * @return current Camera instance
      */
     public Camera setViewPlaneSize(double width, double height){
 
@@ -93,9 +93,9 @@ public class Camera {
     }
 
     /**
-     * setter to distance
+     * setter to distance (chaining method)
      * @param distance distance from the camera to the view plane
-     * @return current Camera object (builder design pattern)
+     * @return current Camera instance
      */
     public Camera setDistance(double distance){
 

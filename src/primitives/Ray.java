@@ -1,5 +1,7 @@
 package primitives;
 
+import java.util.List;
+
 /**
  * class Ray representing a Ray - part of a line that has a fixed starting point
  *
@@ -13,7 +15,8 @@ public class Ray {
 
     /**
      * Ray constructor receiving Point3D and Vector
-     * @param p0 value for beginning point
+     *
+     * @param p0  value for beginning point
      * @param dir value for direction vector
      */
     public Ray(Point3D p0, Vector dir) {
@@ -37,6 +40,7 @@ public class Ray {
 
     /**
      * getter
+     *
      * @return beginning point of the ray
      */
     public Point3D getP0() {
@@ -45,6 +49,7 @@ public class Ray {
 
     /**
      * getter
+     *
      * @return direction vector of the ray
      */
     public Vector getDir() {
@@ -59,8 +64,28 @@ public class Ray {
      * @param t finite distance from p0
      * @return reference to Point3D representing the new point value
      */
-    public Point3D getPoint(double t){
+    public Point3D getPoint(double t) {
 
         return _p0.add(_dir.scale(t));
+    }
+
+    /**
+     * find the closet point to _p0 from list of points
+     * @param pointsList list of Point3D objects
+     * @return the closest point to _p0
+     */
+    public Point3D findClosestPoint(List<Point3D> pointsList) {
+
+        if (pointsList == null) {
+            return null;
+        }
+
+        Point3D closestPoint = pointsList.get(0);
+        for (Point3D point : pointsList) {
+            if (_p0.distance(point) < _p0.distance(closestPoint)) {
+                closestPoint = point;
+            }
+        }
+        return closestPoint;
     }
 }

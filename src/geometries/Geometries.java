@@ -22,9 +22,7 @@ public class Geometries implements Intersectable {
      * Geometries constructor. initialize new geometries collection
      */
     public Geometries() {
-
         _intersectables = new LinkedList<Intersectable>();
-
     }
 
     /**
@@ -32,7 +30,6 @@ public class Geometries implements Intersectable {
      * @param intersectables list of intersectable shapes
      */
     public Geometries(Intersectable... intersectables) {
-
         _intersectables = new LinkedList<>();
         add(intersectables);
     }
@@ -49,7 +46,6 @@ public class Geometries implements Intersectable {
          //}
 
         Collections.addAll(_intersectables, intersectables);
-
     }
 
     /**
@@ -73,7 +69,6 @@ public class Geometries implements Intersectable {
             List<Point3D> points=item.findIntersections(ray);
 
             if(points!=null){
-
                 intersectionPoints.addAll(points);
             }
         }

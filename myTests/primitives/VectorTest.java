@@ -10,6 +10,7 @@ import static primitives.Util.isZero;
 /**
  * Unit tests for primitives.Vector class
  * @author Lior Peretz
+ * @author Reuven Klein
  */
 
 class VectorTest {
