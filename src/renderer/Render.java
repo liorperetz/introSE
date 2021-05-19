@@ -17,9 +17,9 @@ import static primitives.Util.alignZero;
  */
 public class Render {
 
-    ImageWriter _imageWriter;
-    Camera _camera;
-    RayTracerBase _rayTracer;
+     ImageWriter _imageWriter;
+     Camera _camera;
+     RayTracerBase _rayTracer;
 
     /**
      * color each pixel of the view plane

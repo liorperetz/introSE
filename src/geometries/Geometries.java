@@ -22,11 +22,12 @@ public class Geometries implements Intersectable {
      * Geometries constructor. initialize new geometries collection
      */
     public Geometries() {
-        _intersectables = new LinkedList<Intersectable>();
+        _intersectables = new LinkedList<>();
     }
 
     /**
      * Geometries constructor receiving Intersectable list
+     *
      * @param intersectables list of intersectable shapes
      */
     public Geometries(Intersectable... intersectables) {
@@ -41,9 +42,9 @@ public class Geometries implements Intersectable {
      */
     public void add(Intersectable... intersectables) {
 
-         //for (Intersectable item: intersectables) {
-         //    _intersectables.add(item);
-         //}
+        //for (Intersectable item: intersectables) {
+        //    _intersectables.add(item);
+        //}
 
         Collections.addAll(_intersectables, intersectables);
     }
@@ -55,30 +56,22 @@ public class Geometries implements Intersectable {
      * @return list of intersections points of the ray with the the geometries
      */
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersections(Ray ray) {
+        List<GeoPoint> result = null;
 
-        if(_intersectables.isEmpty()){
-
-            return null;
-        }
-
-        List<Point3D> intersectionPoints=new LinkedList<>();
-
-        for (Intersectable item: _intersectables) {
-
-            List<Point3D> points=item.findIntersections(ray);
-
-            if(points!=null){
-                intersectionPoints.addAll(points);
+        //check for ray intersections with each geometry
+        //in the collection, and return list of the intersections points
+        for (Intersectable geometry : _intersectables) {
+            List<GeoPoint> intersectionPoints = geometry.findGeoIntersections(ray);
+            if (intersectionPoints!= null) {
+                if(result==null){
+                    result=new LinkedList<>();
+                }
+                result.addAll(intersectionPoints);
             }
         }
 
-        if(intersectionPoints.size()>0){
-
-            return intersectionPoints;
-        }
-
-        return null; //no shape is intersected
+        return result;
 
     }
 

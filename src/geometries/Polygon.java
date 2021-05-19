@@ -11,7 +11,7 @@ import static primitives.Util.isZero;
  *
  * @author Dan
  */
-public class Polygon implements Geometry {
+public class Polygon extends Geometry {
     /**
      * List of polygon's vertices
      */
@@ -93,42 +93,56 @@ public class Polygon implements Geometry {
      * @return list of intersections points of the ray with the polygon
      *
      * Mathematical principle:
-     * first of all check if the ray intersect the triangle's plane.
+     * first of all check if the ray intersect the polygon's plane.
      * then create vectors (v1,v2,v3...vn) from p0 to each vertex.
-     * these vectors with the polygon create a pyramid (the polygon is the base).
+     * those vectors with the polygon create a pyramid (the polygon is the base).
      * find normals to the pyramid's faces (N1=v1xv2,N2=v2xv3...Nn=vnxv1).
-     * now if the dot product from all v[ray direction] ∙ Ni have the same sign (+/-)
+     * now if the dot product from all v[ray direction] ∙ Ni has the same sign (+/-)
      * it means the intersection point is in the triangle.
      */
+
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersections(Ray ray) {
 
         Plane plane=new Plane(vertices.get(0),vertices.get(1),vertices.get(2));
-        List <Point3D> planeIntersection= plane.findIntersections(ray);
+        List <GeoPoint> planeIntersection= plane.findGeoIntersections(ray);
         if(planeIntersection!=null){
 
             Point3D p0=ray.getP0();
             Vector v=ray.getDir();
 
             //v∙N1
-            double vDotNiPrev=alignZero(v.dotProduct(vertices.get(0).subtract(p0).crossProduct(vertices.get(1).subtract(p0)).normalize()));
+            double vDotNiPrev=alignZero(v.
+                    dotProduct(vertices.get(0).
+                    subtract(p0).
+                    crossProduct(vertices.get(1).
+                            subtract(p0)).normalize()));
             double vDotNiNext;
+
+            //check if all v∙Ni has the same sign
             for(int j=1;j<vertices.size()-1;j++){
 
-               vDotNiNext=alignZero(v.dotProduct(vertices.get(j).subtract(p0).crossProduct(vertices.get(j+1).subtract(p0)).normalize()));
+                vDotNiNext=alignZero(v.dotProduct(vertices.get(j).subtract(p0).
+                                crossProduct(vertices.get(j+1).subtract(p0)).normalize()));
 
-               if(vDotNiPrev<0 && vDotNiNext<0 || vDotNiPrev>0 && vDotNiNext>0){
-                   //if v∙Ni and v∙N(i+1) have the same sign continue, else return null
+                if(vDotNiPrev<0 && vDotNiNext<0 || vDotNiPrev>0 && vDotNiNext>0){
+                    //if v∙Ni and v∙N(i+1) have the same sign continue, else return null
 
-                   vDotNiPrev=vDotNiNext;
-                   continue;
-               }
-               return null;
+                    vDotNiPrev=vDotNiNext;
+                    continue;
+                }
+                return null;
 
             }
             //check if v∙Nn (Nn=vnxv1) also have the same sign
-            vDotNiNext=alignZero(v.dotProduct(vertices.get(vertices.size()-1).subtract(p0).crossProduct(vertices.get(0).subtract(p0)).normalize()));
+            vDotNiNext=alignZero(v.dotProduct(vertices.get(vertices.size()-1).subtract(p0).
+                    crossProduct(vertices.get(0).subtract(p0)).normalize()));
+
             if(vDotNiPrev<0 && vDotNiNext<0 || vDotNiPrev>0 && vDotNiNext>0){
+                //set the geometry field in the geoPoints to the current polygon
+                for (GeoPoint geopoint:planeIntersection) {
+                    geopoint._geometry=this;
+                }
                 return planeIntersection;
             }
             return null;

@@ -1,5 +1,6 @@
 package renderer;
 
+import geometries.Intersectable.GeoPoint;
 import primitives.Color;
 import primitives.Point3D;
 import primitives.Ray;
@@ -32,11 +33,11 @@ public class RayTracerBasic extends RayTracerBase{
     @Override
     public Color traceRay(Ray ray) {
 
-        List<Point3D> intersections=_scene._geometries.findIntersections(ray);
-        //if the ray intersects geometry object calculate the pixel color
+        List<GeoPoint> intersections=_scene._geometries.findGeoIntersections(ray);
+        //if the ray intersects geometry calculate the color of the closest hit
         if(intersections !=null){
-            Point3D closestPoint=ray.findClosestPoint(intersections);
-            return calcColor(closestPoint);
+            GeoPoint closestGeoPoint=ray.findClosestGeoPoint(intersections);
+            return calcColor(closestGeoPoint);
         }
         //default color if the ray does not intersect any geometry
         return  _scene._background;
@@ -45,10 +46,11 @@ public class RayTracerBasic extends RayTracerBase{
     /**
      * calculate the color of single pixel in the view plane
      * considering different kinds of light sources
-     * @param point point in the scene that viewed on the view plane
+     * @param geoPoint point in the scene that viewed on the view plane
      * @return the color of the pixel that view the point
      */
-    private Color calcColor(Point3D point) {
-        return _scene._ambientLight.getIntensity();//for now the only color is the ambient light.
+    private Color calcColor(GeoPoint geoPoint) {
+        return _scene._ambientLight.getIntensity()
+                .add(geoPoint._geometry.getEmission());
     }
 }

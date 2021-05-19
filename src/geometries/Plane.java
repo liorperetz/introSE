@@ -15,7 +15,7 @@ import static primitives.Util.isZero;
  * @author Reuven Klein
  * @author Lior Peretz
  */
-public class Plane implements Geometry  {
+public class Plane extends Geometry  {
     final Point3D _p;//point in the plane
     final Vector _normal;//normal vector to the plane
 
@@ -90,13 +90,12 @@ public class Plane implements Geometry  {
      * => t= (_normal∙(_p-p0))/_normal∙v
      */
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersections(Ray ray) {
 
         Vector v =ray.getDir();
         Point3D p0=ray.getP0();
 
         if(p0.equals(_p)){
-
             return null; //the ray begin in the plane
         }
 
@@ -106,17 +105,15 @@ public class Plane implements Geometry  {
         if(isZero(nQMinusP0) || isZero(nv)){
 
             return null; // nQMinusP0 is 0 when the ray begin in the plane
-                         // nv is 0 when the ray is in the plane
+            // nv is 0 when the ray is in the plane
         }
 
         double t= alignZero(nQMinusP0 / nv);
 
         if (t>0){
-            return List.of(ray.getPoint(t));
+            return List.of(new GeoPoint(this,ray.getPoint(t)));
         }
 
         return null;
-
-
     }
 }

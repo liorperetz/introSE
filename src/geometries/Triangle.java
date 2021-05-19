@@ -26,7 +26,7 @@ public class Triangle extends Polygon {
         super(p1, p2, p3);
     }
 
-/*    *//**
+/*  *//** @Deprecated
      * find intersections points of ray with a triangle
      * @param ray ray in 3d space
      * @return list of intersections points of the ray with the triangle
