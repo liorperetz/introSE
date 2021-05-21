@@ -1,8 +1,12 @@
 package scene;
 
 import elements.AmbientLight;
+import elements.LightSource;
 import geometries.Geometries;
 import primitives.Color;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * class Scene represents a scene - data structure representing geometries, textures,
@@ -11,8 +15,9 @@ import primitives.Color;
 public class Scene {
     public String _name; //name of the scene
     public Color _background =new Color(Color.BLACK); //default background color is black
-    public AmbientLight _ambientLight =new AmbientLight(Color.BLACK,0);//default ambient light is black with intensity 0
+    public AmbientLight _ambientLight =new AmbientLight(Color.BLACK,0);//ambient light in the scene
     public Geometries _geometries;//3D model
+    public List<LightSource> _lights=new LinkedList<LightSource>(); //light sources in the scene
 
     /**
      * Scene constructor
@@ -46,7 +51,6 @@ public class Scene {
         return this;
     }
 
-
     /**
      * geometries setter
      * @param geometries 3D model of the scene
@@ -54,6 +58,16 @@ public class Scene {
      */
     public Scene setGeometries(Geometries geometries) {
         _geometries = geometries;
+        return this;
+    }
+
+    /**
+     * lights setter
+     * @param lights list of light sources in the scene
+     * @return current Scene instance
+     */
+    public Scene setLights(List<LightSource> lights) {
+        _lights = lights;
         return this;
     }
 }

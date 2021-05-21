@@ -4,12 +4,18 @@ import primitives.Color;
 
 /**
  * AmbientLight class represents the ambient light color in a scene
+ *
+ * @author Reuven Klein
+ * @author Lior Peretz
  */
-public class AmbientLight {
+public class AmbientLight extends Light{
+
     /**
-     * intensity of the ambient light
+     * AmbientLight default constructor
      */
-    final private Color _intensity;
+    public AmbientLight() {
+        super(Color.BLACK);
+    }
 
     /**
      * AmbientLight Constructor
@@ -17,14 +23,6 @@ public class AmbientLight {
      * @param kA constant for intensity
      */
     public AmbientLight(Color iA, double kA) {
-        _intensity = iA.scale(kA);
-    }
-
-    /**
-     * intensity getter
-     * @return color's intensity
-     */
-    public Color getIntensity() {
-        return _intensity;
+        super(iA.scale(kA));
     }
 }
