@@ -89,6 +89,7 @@ public class Polygon extends Geometry {
 
     /**
      * find intersections points of ray with a polygon
+     * in a limited maximum distance from ray starting point
      * @param ray ray in 3d space
      * @return list of intersections points of the ray with the polygon
      *
@@ -102,7 +103,7 @@ public class Polygon extends Geometry {
      */
 
     @Override
-    public List<GeoPoint> findGeoIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
 
         Plane plane=new Plane(vertices.get(0),vertices.get(1),vertices.get(2));
         List <GeoPoint> planeIntersection= plane.findGeoIntersections(ray);

@@ -50,21 +50,22 @@ public class Geometries implements Intersectable {
     }
 
     /**
-     * find intersections points of ray with geometries
+     * find intersections points of ray with geoPoints
+     * in a limited maximum distance from ray starting point
      *
      * @param ray ray in 3d space
      * @return list of intersections points of the ray with the the geometries
      */
     @Override
-    public List<GeoPoint> findGeoIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
         List<GeoPoint> result = null;
 
         //check for ray intersections with each geometry
         //in the collection, and return list of the intersections points
         for (Intersectable geometry : _intersectables) {
-            List<GeoPoint> intersectionPoints = geometry.findGeoIntersections(ray);
+            List<GeoPoint> intersectionPoints = geometry.findGeoIntersections(ray,maxDistance);
             if (intersectionPoints!= null) {
-                if(result==null){
+                if(result==null){//result was not initialized yet
                     result=new LinkedList<>();
                 }
                 result.addAll(intersectionPoints);

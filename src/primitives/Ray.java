@@ -12,9 +12,18 @@ import java.util.List;
  * @author Lior Peretz
  */
 public class Ray {
-
-    final Point3D _p0;//beginning point
-    final Vector _dir;//direction vector
+    /**
+     * constant delta, used to move ray's starting point
+     */
+    private static final double DELTA = 0.1;
+    /**
+     * ray's beginning point
+     */
+    final Point3D _p0;
+    /**
+     * ray's direction vector
+     */
+    final Vector _dir;
 
     /**
      * Ray constructor receiving Point3D and Vector
@@ -25,6 +34,18 @@ public class Ray {
     public Ray(Point3D p0, Vector dir) {
         this._p0 = new Point3D(p0._x, p0._y, p0._z);
         this._dir = dir.normalized();
+    }
+
+    /**
+     * Ray constructor with moving in a delta the starting point
+     * @param point basic starting point
+     * @param n moving the point in the direction of n vector
+     * @param dir ray direction vector
+     */
+    public Ray(Point3D point, Vector n, Vector dir) {
+        Vector delta = n.scale(n.dotProduct(dir) > 0 ? DELTA : - DELTA);
+        _p0=point.add(delta);
+        _dir=dir;
     }
 
     @Override
@@ -93,6 +114,12 @@ public class Ray {
         return closestPoint;
     }
 
+    /**
+     * find the closet geoPoint to _p0 from list of geoPoints
+     *
+     * @param geoPointsList list of GeoPoint objects
+     * @return the closest geoPoint to _p0
+     */
     public GeoPoint findClosestGeoPoint(List<GeoPoint> geoPointsList){
 
         if (geoPointsList == null) {

@@ -74,17 +74,12 @@ public class Tube extends Geometry {
     }
 
     /**
-     * find intersections points of ray with a plane
+     * find intersections points of ray with a Tube
      * @param ray ray in 3d space
-     * @return list of intersections points of the ray with the plane
+     * @return list of intersections points of the ray with the Tube
      */
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
-        return null;
-    }
-
-    @Override
-    public List<GeoPoint> findGeoIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
         return null;
     }
 }

@@ -49,13 +49,14 @@ public class Sphere extends Geometry {
 
     /**
      * find intersections points of ray with a sphere
+     * in a limited maximum distance from ray starting point
      *
      * @param ray ray in 3d space
      * @return list of intersections points of the ray with the sphere
      */
 
     @Override
-    public List<GeoPoint> findGeoIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
 
         Point3D p0 = ray.getP0();
         Vector v = ray.getDir();
@@ -73,28 +74,30 @@ public class Sphere extends Geometry {
             //when d>=radius there are no intersections point
             return null;
         }
-
-        //calculating the values of the intersections points
+        //calculating the distance from p0 to the intersections points
         double tH = Math.sqrt((_radius * _radius) - (d * d));
         double t1 = tM - tH;
         double t2 = tM + tH;
-
-        if (t1 > 0 && t2 > 0) {//when there are 2 intersection points
+        //check if the intersections points are in the allowed range
+        boolean validT1 = alignZero(t1 - maxDistance) <= 0;
+        boolean validT2 = alignZero(t2 - maxDistance) <= 0;
+        //determine how many intersections points there are and calculate their values
+        if (t1 > 0 && t2 > 0 && validT1 && validT2) {
+            //there are 2 intersection points
             Point3D p1 = ray.getPoint(t1); //p1=p0+t1v
             Point3D p2 = ray.getPoint(t2);//p2=p0+t2v
-
             return List.of(new GeoPoint(this, p1), new GeoPoint(this, p2));
         }
-        if (t1 > 0) {
+        if (t1 > 0 && validT1) {
             Point3D p1 = ray.getPoint(t1);
             return List.of(new GeoPoint(this, p1));
         }
-        if (t2 > 0) {
+        if (t2 > 0 && validT2) {
             Point3D p2 = ray.getPoint(t2);
             return List.of(new GeoPoint(this, p2));
         }
 
-        return null;
+        return null;//no intersection points
     }
 }
 

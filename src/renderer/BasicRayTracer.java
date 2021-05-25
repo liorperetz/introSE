@@ -2,10 +2,7 @@ package renderer;
 
 import elements.LightSource;
 import geometries.Intersectable.GeoPoint;
-import primitives.Color;
-import primitives.Material;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 import scene.Scene;
 
 import java.util.List;
@@ -20,7 +17,6 @@ import static primitives.Util.alignZero;
  * @author Lior Peretz
  */
 public class BasicRayTracer extends RayTracerBase {
-
     /**
      * BasicRayTracer constructor
      * @param scene instance of Scene
@@ -86,14 +82,17 @@ public class BasicRayTracer extends RayTracerBase {
             Vector l = lightSource.getL(geoPoint._point);
             double nl = alignZero(n.dotProduct(l));
             if (nl * nv > 0) { // sign(nl) == sing(nv)
-                Color lightIntensity = lightSource.getIntensity(geoPoint._point);
-                //add up diffusive and shininess effects
-                color = color.add(calcDiffusive(kd, l, n, lightIntensity),
-                        calcSpecular(ks, l, n, v, nShininess, lightIntensity));
+                if(unshaded(lightSource,l,n,geoPoint)) {//color the point only if it's not a shadow point
+                    Color lightIntensity = lightSource.getIntensity(geoPoint._point);
+                    //add up diffusive and shininess effects
+                    color = color.add(calcDiffusive(kd, l, n, lightIntensity),
+                            calcSpecular(ks, l, n, v, nShininess, lightIntensity));
+                }
             }
         }
         return color;
     }
+
 
     /**
      * calculating diffusion color. formula: (Kd∙|l∙n|)∙lightIntensity
@@ -124,5 +123,23 @@ public class BasicRayTracer extends RayTracerBase {
         double minusVdotR=alignZero(v.scale(-1).dotProduct(r));
         double vrn=Math.pow(minusVdotR,nShininess);
         return lightIntensity.scale(ks*vrn);
+    }
+
+    /**
+     * check if a geoPoint supposed to be shaded or not.
+     *
+     * @param lightSource a light source
+     * @param l vector form the light source to the geoPoint
+     * @param n normal vector to the geometry of the geoPoint from the point
+     * @param geoPoint a geoPoint
+     * @return does the geoPoint is shaded or not
+     */
+    private boolean unshaded(LightSource lightSource, Vector l, Vector n, GeoPoint geoPoint){
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Ray lightRay=new Ray(geoPoint._point ,n, lightDirection);//ray from delta moved geoPoint to the light source
+        //check for ray hits on the way from the geoPoint to the light source
+        List<GeoPoint> intersections = _scene._geometries
+                .findGeoIntersections(lightRay, lightSource.getDistance(geoPoint._point));
+        return intersections ==null;
     }
 }

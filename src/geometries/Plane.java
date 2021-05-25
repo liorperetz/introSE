@@ -15,26 +15,28 @@ import static primitives.Util.isZero;
  * @author Reuven Klein
  * @author Lior Peretz
  */
-public class Plane extends Geometry  {
+public class Plane extends Geometry {
     final Point3D _p;//point in the plane
     final Vector _normal;//normal vector to the plane
 
     /**
      * Plane constructor receiving 3 Point3D objects
+     *
      * @param p1 point in the plane
      * @param p2 point in the plane
      * @param p3 point in the plane
      */
     public Plane(Point3D p1, Point3D p2, Point3D p3) {
-        _p= p1;//point in the plane
-        Vector v1=p1.subtract(p2);
-        Vector v2=p1.subtract(p3);
-        _normal=v1.crossProduct(v2).normalize();
+        _p = p1;//point in the plane
+        Vector v1 = p1.subtract(p2);
+        Vector v2 = p1.subtract(p3);
+        _normal = v1.crossProduct(v2).normalize();
     }
 
     /**
      * Plane constructor receiving Vector and Point3D
-     * @param p point in the plane
+     *
+     * @param p      point in the plane
      * @param normal normal vector to the plane
      */
     public Plane(Point3D p, Vector normal) {
@@ -45,7 +47,6 @@ public class Plane extends Geometry  {
     }
 
     /**
-     *
      * @param p point on the surface
      * @return normal vector to the plane
      */
@@ -56,6 +57,7 @@ public class Plane extends Geometry  {
 
     /**
      * getter
+     *
      * @return p, point in the plane
      */
     public Point3D getP() {
@@ -64,6 +66,7 @@ public class Plane extends Geometry  {
 
     /**
      * getter
+     *
      * @return normal vector to the plane
      */
     public Vector getNormal() {
@@ -80,40 +83,41 @@ public class Plane extends Geometry  {
 
     /**
      * find intersections points of ray with a plane
+     * in a limited maximum distance from ray starting point
+     *
      * @param ray ray in 3d space
      * @return list of intersections points of the ray with the plane
-     *
+     * <p>
      * Mathematical principle:
      * intersection point P equal to P= p0 + t∙v , t > 0 (v is ray direction vector)
      * we know that:
-     * _normal∙( _p − p0 - t∙v ) = 0 => _normal∙(_p−p0)−t∙_normal∙v = 0 =>
-     * => t= (_normal∙(_p-p0))/_normal∙v
+     * normal∙( p − p0 - t∙v ) = 0 => normal∙(p−p0)−t∙normal∙v = 0 =>
+     * => t= (normal∙(p-p0)) / normal∙v
      */
     @Override
-    public List<GeoPoint> findGeoIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
 
-        Vector v =ray.getDir();
-        Point3D p0=ray.getP0();
+        Vector v = ray.getDir();
+        Point3D p0 = ray.getP0();
 
-        if(p0.equals(_p)){
+        if (p0.equals(_p)) {
             return null; //the ray begin in the plane
         }
 
-        double nv=_normal.dotProduct(v);
-        double nQMinusP0=_normal.dotProduct(_p.subtract(p0));
+        double nv = _normal.dotProduct(v);
+        double nQMinusP0 = _normal.dotProduct(_p.subtract(p0));
 
-        if(isZero(nQMinusP0) || isZero(nv)){
-
-            return null; // nQMinusP0 is 0 when the ray begin in the plane
+        if (isZero(nQMinusP0) || isZero(nv)) {
+            // nQMinusP0 is 0 when the ray begin in the plane
             // nv is 0 when the ray is in the plane
+            return null;
         }
 
-        double t= alignZero(nQMinusP0 / nv);
+        double t = alignZero(nQMinusP0 / nv);
 
-        if (t>0){
-            return List.of(new GeoPoint(this,ray.getPoint(t)));
+        if (t > 0 && alignZero(t - maxDistance) <= 0) {
+            return List.of(new GeoPoint(this, ray.getPoint(t)));
         }
-
         return null;
     }
 }

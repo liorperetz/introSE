@@ -43,9 +43,9 @@ public interface Intersectable {
 
     }
     /**
-     * find intersections of rey with geometries
+     * find intersections points of ray with geometries
      * @param ray ray in 3d space
-     * @return list that contains the intersections points of the ray with a geometric shape
+     * @return list of the intersections points of the ray with a geometry
      */
     default List<Point3D> findIntersections(Ray ray) {
         var geoList = findGeoIntersections(ray);
@@ -54,11 +54,22 @@ public interface Intersectable {
     }
 
     /**
-     * find intersections of ray with geometries
+     * find intersections of ray with geoPoints.
+     * contains default implementation
      * @param ray ray in 3d space
-     * @return list that contains the intersections points of the ray with geometries
+     * @return list of the geoPoints the ray intersects with
      */
-    List<GeoPoint> findGeoIntersections(Ray ray);
+    default List<GeoPoint> findGeoIntersections(Ray ray) {
+        return findGeoIntersections(ray, Double.POSITIVE_INFINITY);//infinite distance includes all the geoPoints
+    }
+
+    /**
+     * find intersections of ray with geoPoints with distance limit
+     * @param ray ray in 3d space
+     * @param maxDistance maximum distance limit
+     * @return list of the geoPoints the ray intersects with
+     */
+    List<GeoPoint> findGeoIntersections(Ray ray,double maxDistance);
 
 }
 
