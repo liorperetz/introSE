@@ -106,7 +106,7 @@ public class Polygon extends Geometry {
     public List<GeoPoint> findGeoIntersections(Ray ray, double maxDistance) {
 
         Plane plane=new Plane(vertices.get(0),vertices.get(1),vertices.get(2));
-        List <GeoPoint> planeIntersection= plane.findGeoIntersections(ray);
+        List <GeoPoint> planeIntersection= plane.findGeoIntersections(ray,maxDistance);
         if(planeIntersection!=null){
 
             Point3D p0=ray.getP0();

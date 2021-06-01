@@ -1,6 +1,5 @@
 package primitives;
 
-import geometries.Intersectable;
 import geometries.Intersectable.GeoPoint;
 
 import java.util.List;
@@ -39,13 +38,13 @@ public class Ray {
     /**
      * Ray constructor with moving in a delta the starting point
      * @param point basic starting point
-     * @param n moving the point in the direction of n vector
      * @param dir ray direction vector
+     * @param n moving the point in the direction of n vector
      */
-    public Ray(Point3D point, Vector n, Vector dir) {
+    public Ray(Point3D point, Vector dir, Vector n) {
         Vector delta = n.scale(n.dotProduct(dir) > 0 ? DELTA : - DELTA);
         _p0=point.add(delta);
-        _dir=dir;
+        _dir=dir.normalized();
     }
 
     @Override

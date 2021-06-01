@@ -1,18 +1,37 @@
 package primitives;
 
 /**
- * Material class describe material by it's light reflection qualities
+ * Material class describe material by it's behavior when light hit it
+ *
+ *  @author Reuven Klein
+ *  @author Lior Peretz
  */
 public class Material {
-    public double _Kd =0; //diffusion coefficient
-    public double _Ks =0; //shininess coefficient
-    public int _nShininess =0; //object’s shininess
+    /**
+     * diffusion coefficient
+     */
+    public double _Kd =0d;
+    /**
+     * shininess coefficient
+     */
+    public double _Ks =0d;
+    /**
+     * object’s shininess
+     */
+    public int _nShininess =0;
+    /**
+     * reflection coefficient
+     */
+    public double _Kr=0d;
+    /**
+     * transparency coefficient
+     */
+    public double _Kt=0d;
 
     //chaining setters methods
-
     /**
-     * Kd setter
-     * @param Kd diffusion coefficient
+     * Kd chaining setter
+     * @param Kd material's diffusion coefficient
      * @return current Material instance
      */
     public Material setKd(double Kd) {
@@ -21,8 +40,8 @@ public class Material {
     }
 
     /**
-     * Kd setter
-     * @param Ks shininess coefficient
+     * Kd chaining setter
+     * @param Ks material's shininess coefficient
      * @return current Material instance
      */
     public Material setKs(double Ks) {
@@ -31,12 +50,32 @@ public class Material {
     }
 
     /**
-     * nShininess setter
-     * @param nShininess object’s shininess
+     * nShininess chaining setter
+     * @param nShininess material's shininess
      * @return current Material instance
      */
     public Material setShininess(int nShininess) {
         _nShininess = nShininess;
+        return this;
+    }
+
+    /**
+     * Kr chaining setter
+     * @param kr material's reflection coefficient
+     * @return current Material instance
+     */
+    public Material setKr(double kr) {
+        _Kr = kr;
+        return this;
+    }
+
+    /**
+     * Kt chaining setter
+     * @param kt material's transparency coefficient
+     * @return current Material instance
+     */
+    public Material setKt(double kt) {
+        _Kt = kt;
         return this;
     }
 }

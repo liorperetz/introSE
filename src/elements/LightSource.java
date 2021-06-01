@@ -14,7 +14,8 @@ import primitives.Vector;
 public interface LightSource {
 
     /**
-     * get the color intensity of point in the scene
+     * get the contribution of the light source
+     * to the color intensity of a point in a scene
      * @param p Point3D in space
      * @return color's intensity of p
      */

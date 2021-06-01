@@ -15,19 +15,27 @@ import static primitives.Util.isZero;
  */
 public class Camera {
 
-    //location of the camera
+    /**
+     * location of the camera
+     */
     private final  Point3D _p0;
 
-    //three orthogonal direction vectors relatively to p0
+    /**
+     * three orthogonal direction vectors relatively to p0
+     */
     private final Vector _vUp;
     private final Vector _vTo;
     private final Vector _vRight;
 
-    //dimensions of the view plane
+    /**
+     * dimensions of the view plane
+     */
     private double _width;
     private double _height;
 
-    //distance from the camera to the view plane
+    /**
+     * distance from the camera to the view plane
+     */
     private double _distance;
 
     /**
