@@ -6,6 +6,7 @@ import primitives.*;
 import scene.Scene;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static primitives.Util.alignZero;
 
@@ -30,6 +31,8 @@ public class BasicRayTracer extends RayTracerBase {
      * reflections and refractions
      */
     private static final double INITIAL_K = 1.0;
+
+    private static final int AMOUNT_OF_RAYS = 9;
 
     /**
      * BasicRayTracer constructor
@@ -168,6 +171,42 @@ public class BasicRayTracer extends RayTracerBase {
      private Ray constructRefractedRay(Point3D point, Vector v, Vector normal){
         return new Ray(point,v,normal); //using ray's constructor that moves
                                        // the point by delta in the normal direction
+     }
+
+     private Color beamOfRays(Ray r,Vector n,int level, double kx,double kkx,int kPercent)
+     {
+         if (kPercent==0){
+             return calcGlobalEffect(r,level,kx,kkx);
+         }
+
+         Point3D p0=r.getP0();
+         Vector rVector=r.getDir();
+         Vector right=rVector.crossProduct(n).normalize();
+         Vector up=right.crossProduct(rVector);
+         rVector.scale(100);
+         Point3D center=p0.add(rVector);
+         Point3D upLeftCorner=center.add(up.scale(kPercent/2).add(right.scale(-kPercent/2)));
+
+         int pixelsPerEdge=(int)Math.sqrt(AMOUNT_OF_RAYS);
+         double pixelLen=kPercent/pixelsPerEdge;
+
+         Vector down=up.scale(-1);
+         Color color=Color.BLACK;
+         for (int i = 0; i <pixelsPerEdge ; i++) {
+             for (int j = 0; j < pixelsPerEdge; j++) {
+                 double randomRightToScale = ThreadLocalRandom.current().nextDouble(0, pixelLen);
+                 double randomDownToScale = ThreadLocalRandom.current().nextDouble(0, pixelLen);
+                 Vector randomVector=right.scale(randomRightToScale+j).add(down.scale(randomDownToScale+i));
+                 Point3D randomPoint=upLeftCorner.add(randomVector);
+                 Vector randomRayDir=randomPoint.subtract(p0);
+
+                 if(rVector.dotProduct(n)*randomRayDir.dotProduct(n)>0){
+                     Ray randomRay=new Ray(p0,randomRayDir);
+                     color=color.add(calcGlobalEffect(randomRay,level,kx,kkx));
+                 }
+             }
+         return color.reduce(pixelsPerEdge*pixelsPerEdge);
+         }
      }
 
     /**
