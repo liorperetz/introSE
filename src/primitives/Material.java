@@ -27,6 +27,16 @@ public class Material {
      * transparency coefficient
      */
     public double _Kt=0d;
+    /**
+     * gloss coefficient (0%-100%)
+     */
+    public double _kGlossy =0d;
+
+    public Material setPercent(double percent) {
+        _kGlossy = percent;
+        return this;
+    }
+
 
     //chaining setters methods
     /**
