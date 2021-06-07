@@ -32,7 +32,7 @@ public class BasicRayTracer extends RayTracerBase {
      */
     private static final double INITIAL_K = 1.0;
 
-    private static final int AMOUNT_OF_RAYS = 500;
+    private static final int AMOUNT_OF_RAYS = 1000;
 
     /**
      * BasicRayTracer constructor
@@ -131,8 +131,11 @@ public class BasicRayTracer extends RayTracerBase {
         }
         double kkt = k * material._Kt;
         if (kkt > MIN_CALC_COLOR_K) {
+//            color = color.add(
+//                    calcGlobalEffect(constructRefractedRay(gp._point, v, n), level, material._Kt, kkt));
+            Ray r=constructRefractedRay(gp._point, v, n);
             color = color.add(
-                    calcGlobalEffect(constructRefractedRay(gp._point, v, n), level, material._Kt, kkt));
+                    beamOfRays(r, n, level, material._Kt, kkt, material._kBlur));
         }
         return color;
     }
@@ -195,18 +198,8 @@ public class BasicRayTracer extends RayTracerBase {
 
         Point3D p0 = r.getP0();
         Vector rVector = r.getDir();
-        Vector right;
-        Vector up;
-        if(rVector.dotProduct(n)>0) {
-            //right = rVector.crossProduct(n).normalize();
-            right = rVector.crossProduct(new Vector(0,0,1)).normalize();
-        }
-        else{
-            //right = n.crossProduct(rVector).normalize();
-            right = rVector.crossProduct(new Vector(0,0,1)).normalize();
-        }
-        //Vector up = right.crossProduct(rVector).normalize();
-        up = right.crossProduct(rVector).normalize();
+        Vector right = rVector.crossProduct(new Vector(0,0,1)).normalize();
+        Vector up = right.crossProduct(rVector).normalize();
         rVector=rVector.scale(100);
         Point3D center = p0.add(rVector);
         Point3D upLeftCorner = center.add(up.scale(kPercent).add(right.scale(-kPercent)));

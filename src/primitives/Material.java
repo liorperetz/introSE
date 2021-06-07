@@ -31,12 +31,10 @@ public class Material {
      * gloss coefficient (0%-100%)
      */
     public double _kGlossy =0d;
-
-    public Material setPercent(double percent) {
-        _kGlossy = percent;
-        return this;
-    }
-
+    /**
+     * blurring coefficient (0%-100%)
+     */
+    public double _kBlur =0d;
 
     //chaining setters methods
     /**
@@ -86,6 +84,26 @@ public class Material {
      */
     public Material setKt(double kt) {
         _Kt = kt;
+        return this;
+    }
+
+    /**
+     * kGlossy chaining setter
+     * @param kGlossy material's glossy coefficient
+     * @return current Material instance
+     */
+    public Material setKGlossy(double kGlossy) {
+        _kGlossy = kGlossy;
+        return this;
+    }
+
+    /**
+     * kBlur chaining setter
+     * @param kBlur material's blurring coefficient
+     * @return
+     */
+    public Material setKBlur(double kBlur) {
+        _kBlur = kBlur;
         return this;
     }
 }
