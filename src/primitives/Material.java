@@ -30,11 +30,11 @@ public class Material {
     /**
      * gloss coefficient (0%-100%)
      */
-    public double _kGlossy =0d;
+    public double _kGlossy =100d;
     /**
-     * blurring coefficient (0%-100%)
+     * clearing coefficient (0%-100%)
      */
-    public double _kBlur =0d;
+    public double _kClear =100d;
 
     //chaining setters methods
     /**
@@ -103,7 +103,7 @@ public class Material {
      * @return
      */
     public Material setKBlur(double kBlur) {
-        _kBlur = kBlur;
+        _kClear = kBlur;
         return this;
     }
 }

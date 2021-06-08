@@ -11,13 +11,24 @@ import primitives.Vector;
  * @author Lior Peretz
  */
 public class PointLight extends Light implements LightSource{
-    //point light location
+    /**
+     * point light location
+     */
     private final Point3D _position;
 
     //attenuation coefficients
-    private double _Kc=1;//constant attenuation coefficient
-    private double _Kl=0;//linear attenuation coefficient
-    private double _Kq=0;//quadratic attenuation coefficients
+    /**
+     * constant attenuation coefficient
+     */
+    private double _Kc=1;
+    /**
+     * linear attenuation coefficient
+     */
+    private double _Kl=0;
+    /**
+     * quadratic attenuation coefficients
+     */
+    private double _Kq=0;
 
     /**
      * PointLight constructor

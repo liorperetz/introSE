@@ -16,8 +16,14 @@ import static primitives.Util.alignZero;
  * @author Lior Peretz
  */
 public class Sphere extends Geometry {
-    final Point3D _center;//the center point of the sphere
-    final double _radius;//sphere's radius
+    /**
+     * the center point of the sphere
+     */
+    final Point3D _center;
+    /**
+     * sphere's radius
+     */
+    final double _radius;
 
     /**
      * Sphere constructor receiving radius (double) and Point3D

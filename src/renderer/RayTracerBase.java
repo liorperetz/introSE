@@ -11,8 +11,10 @@ import scene.Scene;
  * @author Lior Peretz
  */
 public abstract class RayTracerBase {
-
-    protected Scene _scene;//scene to be colored
+    /**
+     * scene to be colored
+     */
+    protected Scene _scene;
 
     /**
      * RayTracerBase constructor

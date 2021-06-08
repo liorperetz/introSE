@@ -7,7 +7,9 @@ package primitives;
  * @author Lior Peretz
  */
 public class Vector {
-
+    /**
+     * vector's head point
+     */
     Point3D _head;
 
     /**

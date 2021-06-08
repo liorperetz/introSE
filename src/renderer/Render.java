@@ -16,9 +16,17 @@ import static primitives.Util.alignZero;
  * @author Lior Peretz
  */
 public class Render {
-
+    /**
+     * imageWriter write pixel's colors to image
+     */
      ImageWriter _imageWriter;
-     Camera _camera;
+    /**
+     * the camera that watch the scene
+     */
+    Camera _camera;
+    /**
+     * rayTracer to trace rays from the camera and color the pixels
+     */
      RayTracerBase _rayTracer;
 
     /**

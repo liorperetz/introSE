@@ -31,8 +31,10 @@ public class BasicRayTracer extends RayTracerBase {
      * reflections and refractions
      */
     private static final double INITIAL_K = 1.0;
-
-    private static final int AMOUNT_OF_RAYS = 1000;
+    /**
+     * desired amount of rays in a beam
+     */
+    private static final int AMOUNT_OF_RAYS = 81;
 
     /**
      * BasicRayTracer constructor
@@ -126,16 +128,13 @@ public class BasicRayTracer extends RayTracerBase {
         double kkr = k * material._Kr;
         if (kkr > MIN_CALC_COLOR_K) {
             Ray r = constructReflectedRay(gp._point, v, n);
-            color = beamOfRays(r, n, level, material._Kr, kkr, material._kGlossy);
-//              color = calcGlobalEffect(constructReflectedRay(gp._point, v, n), level, material._Kr, kkr);
+            color = calcColorFromBeamOfRays(r, n, level, material._Kr, kkr, material._kGlossy);
         }
         double kkt = k * material._Kt;
         if (kkt > MIN_CALC_COLOR_K) {
-//            color = color.add(
-//                    calcGlobalEffect(constructRefractedRay(gp._point, v, n), level, material._Kt, kkt));
-            Ray r=constructRefractedRay(gp._point, v, n);
+            Ray r = constructRefractedRay(gp._point, v, n);
             color = color.add(
-                    beamOfRays(r, n, level, material._Kt, kkt, material._kBlur));
+                    calcColorFromBeamOfRays(r, n, level, material._Kt, kkt, material._kClear));
         }
         return color;
     }
@@ -168,13 +167,9 @@ public class BasicRayTracer extends RayTracerBase {
      */
     private Ray constructReflectedRay(Point3D point, Vector v, Vector normal) {
         double vDotN = v.dotProduct(normal);
-//        if(vDotN<0){
-//            normal= normal.scale(-1);
-//        }
-        //r=v-2*(v*n)*n
         Vector r = v.subtract(normal.scale(2 * vDotN));
         return new Ray(point, r, normal);//using ray's constructor that moves
-                                        // the point by delta at the normal direction
+        // the point by delta at the normal direction
     }
 
     /**
@@ -190,34 +185,61 @@ public class BasicRayTracer extends RayTracerBase {
         // the point by delta in the normal direction
     }
 
-    private Color beamOfRays(Ray r, Vector n, int level, double kx, double kkx, double kPercent) {
+    /**
+     * calculating recursively the global color effect of geoPoint
+     * from beam of rays that dispersed around central ray.
+     *
+     * @param r              the central ray
+     * @param n              normal to the geoPoint
+     * @param level          recursion depth
+     * @param kx             either transparency or reflection coefficient of the current calculated geometry
+     * @param kkx            either transparency or reflection coefficient from the last recursion level
+     * @param kGlossyOrClear coefficient of glossy or clear
+     * @return average color from the beam of the rays
+     */
+    private Color calcColorFromBeamOfRays(Ray r, Vector n, int level, double kx, double kkx, double kGlossyOrClear) {
 
-        if (kPercent == 0) {
+        if (kGlossyOrClear == 100) {//if kGlossy is 100 the surface is perfect mirror and
+            //if KClear is 100 the surface is perfect transparent
             return calcGlobalEffect(r, level, kx, kkx);
         }
+        double diffuse = 100 - kGlossyOrClear;//diffuse determines the edge's length of the
+        // target surface the rays are sent to.
+        // the more glossy and clear the material is, the rays less diffused.
 
         Point3D p0 = r.getP0();
         Vector rVector = r.getDir();
-        Vector right = rVector.crossProduct(new Vector(0,0,1)).normalize();
+        //calculate the directions vectors of the target plane
+        Vector right = rVector.crossProduct(new Vector(0, 0, 1)).normalize();
         Vector up = right.crossProduct(rVector).normalize();
-        rVector=rVector.scale(100);
-        Point3D center = p0.add(rVector);
-        Point3D upLeftCorner = center.add(up.scale(kPercent).add(right.scale(-kPercent)));
+        rVector = rVector.scale(100);//Set the target surface at a distance of 100 from the starting point
 
-        int pixelsPerEdge = (int) Math.sqrt(AMOUNT_OF_RAYS);
-        double pixelLen = kPercent / pixelsPerEdge;
-        int sumOfRays = pixelsPerEdge * pixelsPerEdge;
+        //get from p0 to the up left vertex of the target surface
+        Point3D center = p0.add(rVector);
+        Point3D upLeftCorner = center.add(up.scale(diffuse).add(right.scale(-diffuse)));
+
+        int squaresPerEdge = (int) Math.sqrt(AMOUNT_OF_RAYS);
+        int sumOfRays = squaresPerEdge * squaresPerEdge;
+        double squareLength = (diffuse * 2) / squaresPerEdge;
 
         Vector down = up.scale(-1);
         Color color = Color.BLACK;
-        for (int i = 0; i < pixelsPerEdge; i++) {
-            for (int j = 0; j < pixelsPerEdge; j++) {
-                double randomRightToScale = ThreadLocalRandom.current().nextDouble(0, pixelLen);
-                double randomDownToScale = ThreadLocalRandom.current().nextDouble(0, pixelLen);
-                Vector randomVector = right.scale(randomRightToScale + j*pixelLen).add(down.scale(randomDownToScale + i*pixelLen));
+        //divide the target plana to squared grid
+        //and send random ray to each square in the grid
+        for (int i = 0; i < squaresPerEdge; i++) {
+            for (int j = 0; j < squaresPerEdge; j++) {
+                //scaling the right and down vectors in random value
+                //in order to reach to a random point at the square
+                //and create ray from p0 to it
+                double randomRightToScale = ThreadLocalRandom.current().nextDouble(0, squareLength);
+                double randomDownToScale = ThreadLocalRandom.current().nextDouble(0, squareLength);
+                Vector randomVector = right.scale(randomRightToScale + j * squareLength).
+                        add(down.scale(randomDownToScale + i * squareLength));
                 Point3D randomPoint = upLeftCorner.add(randomVector);
                 Vector randomRayDir = randomPoint.subtract(p0);
 
+                //if the ray does not pass the surface to the other side
+                // calculate the global color effect from it, else ignore it.
                 if (alignZero(rVector.dotProduct(n)) * alignZero(randomRayDir.dotProduct(n)) > 0) {
                     Ray randomRay = new Ray(p0, randomRayDir);
                     color = color.add(calcGlobalEffect(randomRay, level, kx, kkx));
@@ -226,7 +248,7 @@ public class BasicRayTracer extends RayTracerBase {
                 }
             }
         }
-        return color.reduce(sumOfRays);
+        return color.reduce(sumOfRays);//return the average color from all rays
     }
 
     /**

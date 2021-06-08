@@ -14,7 +14,10 @@ import static primitives.Util.isZero;
  * @author Lior Peretz
  */
 public class Cylinder extends Tube {
-   final double _height;//cylinder's height
+    /**
+     * cylinder's height
+     */
+   final double _height;
 
     /**
      * Cylinder constructor receiving radius (double), Ray and height (double)

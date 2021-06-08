@@ -20,17 +20,28 @@ public class Camera {
      */
     private final  Point3D _p0;
 
+    //three orthogonal direction vectors relatively to p0
     /**
-     * three orthogonal direction vectors relatively to p0
+     * up vector
      */
     private final Vector _vUp;
+    /**
+     * forward vector
+     */
     private final Vector _vTo;
+    /**
+     * right vector
+     */
     private final Vector _vRight;
 
+    //dimensions of the view plane
     /**
-     * dimensions of the view plane
+     * view plane width
      */
     private double _width;
+    /**
+     * view plane height
+     */
     private double _height;
 
     /**

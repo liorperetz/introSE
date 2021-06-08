@@ -8,10 +8,16 @@ package primitives;
  */
 public class Point3D {
     /**
-     * 3 coordinates values to represent a 3D point (x,y,z)
+     * x axis coordinate
      */
     final Coordinate _x;
+    /**
+     * y axis coordinate
+     */
     final Coordinate _y;
+    /**
+     * z axis coordinate
+     */
     final Coordinate _z;
     /**
      * 3D point constant (0,0,0) use for comparisons
@@ -118,14 +124,37 @@ public class Point3D {
         return Math.sqrt(distanceSquared(p));
     }
 
+    /**
+     * calculate the midpoint value between two points
+     * @param p point3D
+     * @return the midpoint between p and current Point3d instance
+     */
+    public Point3D midPoint(Point3D p){
+        return new Point3D((getX()+p.getX())/2,
+                (getY()+p.getY())/2,
+                (getZ()+p.getZ())/2);
+    }
+
+    /**
+     * x coordinate getter
+     * @return x coordinate value
+     */
     public double getX() {
         return _x.coord;
     }
 
+    /**
+     * x coordinate getter
+     * @return x coordinate value
+     */
     public double getY() {
         return _y.coord;
     }
 
+    /**
+     * x coordinate getter
+     * @return x coordinate value
+     */
     public double getZ() {
         return _z.coord;
     }
