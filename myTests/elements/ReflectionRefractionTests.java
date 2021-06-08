@@ -216,7 +216,8 @@ public class ReflectionRefractionTests {
     @Test
     public void targil8() {
 
-        Scene scene = new Scene("Test scene").setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
+        Scene scene = new Scene("Test scene")
+                .setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
         Camera camera = new Camera(new Point3D(290, -130, 50), new Vector(-3, 1, 0), new Vector(0, 0, 1)) //
                 .setViewPlaneSize(350, 350).setDistance(200);
 
@@ -294,7 +295,7 @@ public class ReflectionRefractionTests {
         Point3D topRightPyramid=A.midPoint(C).
                 add(B.subtract(F).normalize().scale(60));
 
-        scene._geometries.add(new Polygon(topRightPyramid,A,B).setEmission(new Color(java.awt.Color.ORANGE)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
+        scene._geometries.add(new Polygon(topRightPyramid,A,B).setEmission(new Color(java.awt.Color.pink)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
                 new Polygon(topRightPyramid,B,C).setEmission(new Color(java.awt.Color.PINK)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
                 new Polygon(topRightPyramid,C,D).setEmission(new Color(java.awt.Color.pink)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
                 new Polygon(topRightPyramid,A,D).setEmission(new Color(java.awt.Color.PINK)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)));
@@ -328,13 +329,15 @@ public class ReflectionRefractionTests {
                 new Point3D(0,1,0),
                 new Point3D(1,0,0)).
                 setEmission(new Color(30, 30, 30)).
-                setMaterial(new Material().setKd(0.4).setKs(0.8).setShininess(60).setKr(0.8).setKGlossy(100)));
-
-        scene._geometries.add(new Plane(new Point3D(-480,0,1),
-                new Point3D(-480,0,0),
-                new Point3D(-480,1,0)).
-                setEmission(new Color(17, 175, 64)).
                 setMaterial(new Material().setKd(0.4).setKs(0.8).setShininess(60)));
+
+        //balls
+        scene._geometries.add(new Sphere(130,new Point3D(-280, 400, 130)).
+                setEmission(new Color(java.awt.Color.RED)).
+                setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4).setKGlossy(90)));
+        scene._geometries.add(new Sphere(20,new Point3D(30, -150, 20)).
+                setEmission(new Color(java.awt.Color.RED)).
+                setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4)));
 
 
 
@@ -345,7 +348,7 @@ public class ReflectionRefractionTests {
         scene._lights.add( //
                 new DirectionalLight(new Color(java.awt.Color.BLUE), new Vector(new Point3D(0, -1, -2))));
 
-        ImageWriter imageWriter = new ImageWriter("imageToTargil8_fullReflection", 600, 600);
+        ImageWriter imageWriter = new ImageWriter("imageToTargil8Glossy", 1000, 1000);
         Render render = new Render() //
                 .setImageWriter(imageWriter) //
                 .setCamera(camera) //
