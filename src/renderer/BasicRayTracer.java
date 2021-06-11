@@ -34,7 +34,7 @@ public class BasicRayTracer extends RayTracerBase {
     /**
      * desired amount of rays in a beam
      */
-    private static final int AMOUNT_OF_RAYS = 81;
+    private static final int AMOUNT_OF_RAYS = 500;
 
     /**
      * BasicRayTracer constructor
@@ -187,7 +187,7 @@ public class BasicRayTracer extends RayTracerBase {
 
     /**
      * calculating recursively the global color effect of geoPoint
-     * from beam of rays that dispersed around central ray.
+     * from beam of rays that scatter around a central ray.
      *
      * @param r              the central ray
      * @param n              normal to the geoPoint
@@ -200,32 +200,34 @@ public class BasicRayTracer extends RayTracerBase {
     private Color calcColorFromBeamOfRays(Ray r, Vector n, int level, double kx, double kkx, double kGlossyOrClear) {
 
         if (kGlossyOrClear == 100) {//if kGlossy is 100 the surface is perfect mirror and
-            //if KClear is 100 the surface is perfect transparent
+                                    //if KClear is 100 the surface is perfect transparent
             return calcGlobalEffect(r, level, kx, kkx);
         }
-        double diffuse = 100 - kGlossyOrClear;//diffuse determines the edge's length of the
-        // target surface the rays are sent to.
-        // the more glossy and clear the material is, the rays less diffused.
-
+        double scatteringWidth = 100 - kGlossyOrClear;//scatteringWidth determines the edge's length of the
+                                                     // target surface the rays are sent to.
+                                                    // the more glossy and clear the material is, the rays less scatters.
+       //building a target surface to which rays will be sent
         Point3D p0 = r.getP0();
         Vector rVector = r.getDir();
-        //calculate the directions vectors of the target plane
+        //calculate the directions vectors of the target surface
         Vector right = rVector.crossProduct(new Vector(0, 0, 1)).normalize();
         Vector up = right.crossProduct(rVector).normalize();
         rVector = rVector.scale(100);//Set the target surface at a distance of 100 from the starting point
 
         //get from p0 to the up left vertex of the target surface
         Point3D center = p0.add(rVector);
-        Point3D upLeftCorner = center.add(up.scale(diffuse).add(right.scale(-diffuse)));
+        Point3D upLeftCorner = center.add(up.scale(scatteringWidth).add(right.scale(-scatteringWidth)));
 
+        //calculate the actual amount of rays (must have an integer square root)
         int squaresPerEdge = (int) Math.sqrt(AMOUNT_OF_RAYS);
         int sumOfRays = squaresPerEdge * squaresPerEdge;
-        double squareLength = (diffuse * 2) / squaresPerEdge;
+       //length of each square in the grid of the target plane
+        double squareLength = (scatteringWidth * 2) / squaresPerEdge;
 
         Vector down = up.scale(-1);
         Color color = Color.BLACK;
-        //divide the target plana to squared grid
-        //and send random ray to each square in the grid
+        //divide the target surface to squared grid
+        //and send random ray to each square in it
         for (int i = 0; i < squaresPerEdge; i++) {
             for (int j = 0; j < squaresPerEdge; j++) {
                 //scaling the right and down vectors in random value
@@ -248,7 +250,7 @@ public class BasicRayTracer extends RayTracerBase {
                 }
             }
         }
-        return color.reduce(sumOfRays);//return the average color from all rays
+        return color.reduce(sumOfRays);//average color from all rays
     }
 
     /**

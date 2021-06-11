@@ -337,7 +337,7 @@ public class ReflectionRefractionTests {
                 setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4).setKGlossy(90)));
         scene._geometries.add(new Sphere(20,new Point3D(30, -150, 20)).
                 setEmission(new Color(java.awt.Color.RED)).
-                setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4)));
+                setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4).setKGlossy(85)));
 
 
 
@@ -353,7 +353,7 @@ public class ReflectionRefractionTests {
                 .setImageWriter(imageWriter) //
                 .setCamera(camera) //
                 .setRayTracer(new BasicRayTracer(scene));
-
+        render.setMultithreading(3);
         render.renderImage();
         render.writeToImage();
 
