@@ -99,11 +99,11 @@ public class Material {
 
     /**
      * kBlur chaining setter
-     * @param kBlur material's blurring coefficient
+     * @param kClear material's blurring coefficient
      * @return
      */
-    public Material setKBlur(double kBlur) {
-        _kClear = kBlur;
+    public Material setKClear(double kClear) {
+        _kClear = kClear;
         return this;
     }
 }

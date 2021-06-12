@@ -348,11 +348,49 @@ public class ReflectionRefractionTests {
         scene._lights.add( //
                 new DirectionalLight(new Color(java.awt.Color.BLUE), new Vector(new Point3D(0, -1, -2))));
 
-        ImageWriter imageWriter = new ImageWriter("imageToTargil8Glossy", 1000, 1000);
+        ImageWriter imageWriter = new ImageWriter("imageToTargil8Glossy1", 1000, 1000);
         Render render = new Render() //
                 .setImageWriter(imageWriter) //
                 .setCamera(camera) //
                 .setRayTracer(new BasicRayTracer(scene));
+        render.setMultithreading(3);
+        render.renderImage();
+        render.writeToImage();
+
+    }
+
+    @Test
+    public void diffusedGlass() {
+        Scene scene = new Scene("Test scene").setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
+        scene.setBackground(new Color(20,20,20));
+        Camera camera = new Camera(new Point3D(100, 0, 0), new Vector(-1, 0, 0)) //
+                .setViewPlaneSize(150, 150).setDistance(120);
+
+        scene._geometries.add(//
+                new Polygon(new Point3D(-20,-20,10),
+                        new Point3D(-20,-20,-10),
+                        new Point3D(-20,-5,-10),
+                        new Point3D(-20,-5,10)).
+                        setEmission(new Color(20, 20, 20)).
+                        setMaterial(new Material().setKt(0.9).setKClear(90)),
+                new Sphere(15, new Point3D(-40, 0, 0)).
+                        setEmission(new Color(java.awt.Color.GRAY)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)));
+
+
+
+        scene._lights.add( //
+                new DirectionalLight(new Color(246, 250, 209), new Vector(new Point3D(0, 1, -1))));
+        scene._lights.add(new SpotLight(new Color(148, 228, 233), new Point3D(60, 0, 0), new Vector(-39.883192952952413, -13.862502322740898, 0)) //
+                .setKl(0.001).setKq(0.001));
+        scene._lights.add( //
+                new DirectionalLight(new Color(java.awt.Color.BLUE), new Vector(new Point3D(0, -1, -2))));
+
+        ImageWriter imageWriter = new ImageWriter("testDiffusedGlass", 1000, 1000);
+        Render render = new Render() //
+                .setImageWriter(imageWriter) //
+                .setCamera(camera) //
+                .setRayTracer(new BasicRayTracer(scene));
+
         render.setMultithreading(3);
         render.renderImage();
         render.writeToImage();
