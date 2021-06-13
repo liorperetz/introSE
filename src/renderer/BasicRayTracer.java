@@ -36,7 +36,14 @@ public class BasicRayTracer extends RayTracerBase {
      * desired amount of rays in a beam
      */
     private static final int AMOUNT_OF_RAYS = 81;
-
+    /**
+     * adaptive supersampling switch
+     */
+    boolean adaptiveSupersampling=true;
+    /**
+     * recursion max depth
+     */
+    int level=6;
     /**
      * BasicRayTracer constructor
      *
@@ -253,6 +260,80 @@ public class BasicRayTracer extends RayTracerBase {
         }
         return color.reduce(sumOfRays);//average color from all rays
     }
+
+    private Color adaptiveSupersampling(Vector down,Vector right,double edgeLen){
+
+        int colorMatrixDimension=(int)Math.pow(2,level-1);
+        Color[][]colors=new Color[colorMatrixDimension][colorMatrixDimension];
+        for (int i = 0; i <colorMatrixDimension ; i++) {
+            for (int j = 0; j < colorMatrixDimension; j++) {
+                colors[i][j]=null;
+            }
+        }
+
+        Tuple topLeft=new Tuple(0,0);
+        Tuple topRight=new Tuple(0,colorMatrixDimension-1);
+        Tuple bottomLeft=new Tuple(colorMatrixDimension-1,0);
+        Tuple bottomRight=new Tuple(colorMatrixDimension-1,colorMatrixDimension-1);
+        Color color=Color.BLACK;
+        return adaptiveSupersampling(colors,level,topLeft,topRight,bottomLeft, bottomRight,color);
+
+    }
+
+    class Tuple{
+       private int _x;
+       private int _y;
+       public Tuple(int x,int y){
+            _x=x;
+            _y=y;
+        }
+       public int getX(){
+           return _x;
+       }
+       public int getY(){
+           return _y;
+       }
+    }
+
+    private Color adaptiveSupersampling(Color[][] colors,int level,Tuple topLeft,Tuple topRight,Tuple bottomLeft, Tuple bottomRight,Color color ){
+        Color colorTopLeft=colors[topLeft._x][topLeft._y];
+        Color colorTopRight=colors[topRight._x][topRight._y];
+        Color colorBottomLeft=colors[bottomLeft._x][bottomLeft._y];
+        Color colorBottomRight=colors[topRight._x][topRight._y];
+        if(colorBottomRight==null){
+            //calccolor
+        }
+        if(colorBottomLeft==null){
+            //calccolor
+        }
+        if(colorTopRight==null){
+//calccolor
+        }
+        if(colorTopRight==null){
+//calccolor
+        }
+
+        if(colorBottomRight.equals(colorBottomLeft)&&
+                colorBottomLeft.equals(colorTopRight)&&
+                colorTopRight.equals(colorTopLeft)){
+            return colorBottomRight.add(colorBottomLeft,colorTopRight,colorTopLeft).reduce(4);
+        }
+
+
+        Tuple middleTop=new Tuple(topLeft._x,(topLeft._y+topRight._y)/2);
+        Tuple middleRight=new Tuple((topRight._x+bottomRight._x)/2,topRight._y);
+        Tuple middleLeft=new Tuple((topLeft._x+bottomLeft._x)/2,topLeft._y);
+        Tuple middlebottom=new Tuple(bottomLeft._x,(bottomLeft._y+bottomRight._y)/2);
+        Tuple center= new Tuple((topLeft._x+bottomLeft._x)/2,(topLeft._y+topRight._y)/2);
+        color=color.add(adaptiveSupersampling(colors,level-1,topLeft, middleTop, middleLeft, center,color));
+        color=color.add(adaptiveSupersampling(colors,level-1,middleLeft,topRight,center,middleRight,color));
+        color=color.add(adaptiveSupersampling(colors,level-1,middleLeft,center,bottomLeft,middlebottom,color));
+        color=color.add(adaptiveSupersampling(colors,level-1,center,middleRight,middlebottom,bottomRight,color));
+
+        return color.reduce(4);
+    }
+
+
 
     /**
      * calculate color's local effects (diffusive and shininess)
