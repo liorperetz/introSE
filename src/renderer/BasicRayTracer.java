@@ -35,7 +35,7 @@ public class BasicRayTracer extends RayTracerBase {
     /**
      * desired amount of rays in a beam
      */
-    private static final int AMOUNT_OF_RAYS = 1000;
+    private static final int AMOUNT_OF_RAYS = 81;
 
     /**
      * BasicRayTracer constructor
@@ -211,7 +211,7 @@ public class BasicRayTracer extends RayTracerBase {
         Point3D p0 = r.getP0();
         Vector rVector = r.getDir();
         //calculate the directions vectors of the target surface
-        Vector right = rVector.crossProduct(Camera.get_default_vUP()).normalize();
+        Vector right = rVector.crossProduct(_upVector.normalize());
         Vector up = right.crossProduct(rVector).normalize();
         rVector = rVector.scale(100);//Set the target surface at a distance of 100 from the starting point
 
@@ -355,4 +355,5 @@ public class BasicRayTracer extends RayTracerBase {
         }
         return ktr;
     }
+
 }

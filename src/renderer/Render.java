@@ -253,7 +253,7 @@ public class Render {
             if (_camera == null) {
                 throw new MissingResourceException("missing resource value", Camera.class.getName(), "");
             }
-
+            _rayTracer.set_upVector(_camera.get_vUp());
             //rendering the image
             final int nX= _imageWriter.getNx();//amount of pixels in x axis (width)
             final int nY=_imageWriter.getNy();//amount of pixels in y axis (height)

@@ -48,10 +48,6 @@ public class Camera {
      * distance from the camera to the view plane
      */
     private double _distance;
-    /**
-     * default vUP, used when Glossy surfaces and Diffused glass features are working
-     */
-    private static Vector default_vUP=new Vector(0,0,1);
 
     /**
      * Camera constructor
@@ -68,30 +64,6 @@ public class Camera {
         _vTo = vTo.normalize();
         _vUp = vUp.normalize();
         _vRight = _vTo.crossProduct(_vUp);//vRight is the cross product vTo X vUp according to right hand rule
-    }
-
-    /**
-     * camera constructor using the default vUp vector
-     * @param p0 location of the camera
-     * @param vTo normal vector to the view plane
-     */
-    public Camera(Point3D p0, Vector vTo) {
-
-        if (!isZero(vTo.dotProduct(get_default_vUP())))// if vTo and vUp are not orthogonal throw exception
-            throw new IllegalArgumentException("vUp and vTo need to be orthogonal");
-
-        _p0 = new Point3D(p0.getX(), p0.getY(), p0.getZ());
-        _vTo = vTo.normalize();
-        _vUp = get_default_vUP().normalize();
-        _vRight = _vTo.crossProduct(_vUp);//vRight is the cross product vTo X default vUP according to right hand rule
-    }
-
-    /**
-     * default vUp getter
-     * @return
-     */
-    public static Vector get_default_vUP() {
-        return default_vUP;
     }
 
     /**

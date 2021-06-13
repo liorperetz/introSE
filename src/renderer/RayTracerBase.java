@@ -2,6 +2,7 @@ package renderer;
 
 import primitives.Color;
 import primitives.Ray;
+import primitives.Vector;
 import scene.Scene;
 
 /**
@@ -15,6 +16,10 @@ public abstract class RayTracerBase {
      * scene to be colored
      */
     protected Scene _scene;
+    /**
+     * the up vector of the view plane
+     */
+    protected Vector _upVector;
 
     /**
      * RayTracerBase constructor
@@ -31,4 +36,11 @@ public abstract class RayTracerBase {
      */
     public abstract Color traceRay(Ray ray);
 
+    /**
+     * upVector setter
+     * @param vUp up vector of the view plane
+     */
+    public void set_upVector(Vector vUp) {
+        _upVector=vUp;
+    }
 }

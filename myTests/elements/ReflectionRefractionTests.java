@@ -124,7 +124,7 @@ public class ReflectionRefractionTests {
     public void imageToTargil7_1() {
         //Scene scene = new Scene("Test scene").setAmbientLight(new AmbientLight(new Color(java.awt.Color.pink),0.2));
         Scene scene = new Scene("Test scene").setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
-        ;
+
         Camera camera = new Camera(new Point3D(100, 30, 0), new Vector(-1, 0, 0), new Vector(0, 0, 1)) //
                 .setViewPlaneSize(150, 150).setDistance(80);
 
@@ -170,7 +170,7 @@ public class ReflectionRefractionTests {
     public void testBeam() {
         //Scene scene = new Scene("Test scene").setAmbientLight(new AmbientLight(new Color(java.awt.Color.pink),0.2));
         Scene scene = new Scene("Test scene").setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
-        ;
+
         Camera camera = new Camera(new Point3D(100, 30, 0), new Vector(-1, 0, 0), new Vector(0, 0, 1)) //
                 .setViewPlaneSize(150, 150).setDistance(80);
 
@@ -363,7 +363,7 @@ public class ReflectionRefractionTests {
     public void diffusedGlass() {
         Scene scene = new Scene("Test scene").setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
         scene.setBackground(new Color(20,20,20));
-        Camera camera = new Camera(new Point3D(100, 0, 0), new Vector(-1, 0, 0)) //
+        Camera camera = new Camera(new Point3D(100, 0, 0), new Vector(-1, 0, 0),new Vector(0,0,1)) //
                 .setViewPlaneSize(150, 150).setDistance(120);
 
         scene._geometries.add(//
@@ -385,7 +385,7 @@ public class ReflectionRefractionTests {
         scene._lights.add( //
                 new DirectionalLight(new Color(java.awt.Color.BLUE), new Vector(new Point3D(0, -1, -2))));
 
-        ImageWriter imageWriter = new ImageWriter("testDiffusedGlass", 1000, 1000);
+        ImageWriter imageWriter = new ImageWriter("testDiffusedGlass11", 1000, 1000);
         Render render = new Render() //
                 .setImageWriter(imageWriter) //
                 .setCamera(camera) //
