@@ -29,13 +29,8 @@ public class Render {
      */
      RayTracerBase _rayTracer;
 
-    private static final String RESOURCE_ERROR = "Renderer resource not set";
-    private static final String RENDER_CLASS = "Render";
-    private static final String IMAGE_WRITER_COMPONENT = "Image writer";
-    private static final String CAMERA_COMPONENT = "Camera";
-    private static final String RAY_TRACER_COMPONENT = "Ray tracer";
 
-    private int threadsCount = 0;
+    private int threadsCount = 0;//number of desired threads
     private static final int SPARE_THREADS = 2; // Spare threads if trying to use all the cores
     private boolean print = false; // printing progress percentage
 
@@ -314,16 +309,32 @@ public class Render {
     }
 
     //chaining setters methods
+
+    /**
+     * imageWriter chaining setter
+     * @param imageWriter ImageWriter object
+     * @return current Render instance
+     */
     public Render setImageWriter(ImageWriter imageWriter) {
         _imageWriter = imageWriter;
         return this;
     }
 
+    /**
+     * camera chaining setter
+     * @param camera Camera object
+     * @return current Render instance
+     */
     public Render setCamera(Camera camera) {
         _camera = camera;
         return this;
     }
 
+    /**
+     * rayTracer chaining setter
+     * @param rayTracer RayTracerBase object
+     * @return current Render instance
+     */
     public Render setRayTracer(RayTracerBase rayTracer) {
         _rayTracer = rayTracer;
         return this;

@@ -9,6 +9,8 @@ import primitives.*;
 import renderer.*;
 import scene.Scene;
 
+import java.util.Arrays;
+
 /**
  * Tests for reflection and transparency functionality, test for partial shadows
  * (with transparency)
@@ -201,7 +203,7 @@ public class ReflectionRefractionTests {
         scene._lights.add( //
                 new DirectionalLight(new Color(java.awt.Color.BLUE), new Vector(new Point3D(0, -1, -2))));
 
-        ImageWriter imageWriter = new ImageWriter("testBeam", 500, 500);
+        ImageWriter imageWriter = new ImageWriter("testBeamAA", 500, 500);
         Render render = new Render() //
                 .setImageWriter(imageWriter) //
                 .setCamera(camera) //
@@ -209,6 +211,7 @@ public class ReflectionRefractionTests {
 
         render.renderImage();
         render.writeToImage();
+        render.setMultithreading(3);
 
     }
 
@@ -286,11 +289,11 @@ public class ReflectionRefractionTests {
         Point3D H=new Point3D(-172.942660838820359, -43.966674509673027, 172.817882753623735);
 
         scene._geometries.add(new Polygon(A,E,F,B).setEmission(new Color(java.awt.Color.ORANGE)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
-                new Polygon(B,F,G,C).setEmission(new Color(java.awt.Color.ORANGE)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
-                new Polygon(C,G,H,D).setEmission(new Color(java.awt.Color.ORANGE)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
-                new Polygon(D,H,E,A).setEmission(new Color(java.awt.Color.ORANGE)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
-                new Polygon(H,G,F,E).setEmission(new Color(java.awt.Color.ORANGE)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
-                new Polygon(C,D,A,B).setEmission(new Color(java.awt.Color.ORANGE)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)));
+                new Polygon(B,F,G,C).setEmission(new Color(java.awt.Color.orange)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
+                new Polygon(C,G,H,D).setEmission(new Color(java.awt.Color.orange)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
+                new Polygon(D,H,E,A).setEmission(new Color(java.awt.Color.orange)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
+                new Polygon(H,G,F,E).setEmission(new Color(java.awt.Color.orange)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)),
+                new Polygon(C,D,A,B).setEmission(new Color(java.awt.Color.orange)).setMaterial(new Material().setKd(0.25).setKs(0.3).setShininess(20)));
         //base
         Point3D topRightPyramid=A.midPoint(C).
                 add(B.subtract(F).normalize().scale(60));
@@ -328,16 +331,79 @@ public class ReflectionRefractionTests {
         scene._geometries.add(new Plane(new Point3D(0,0,0),
                 new Point3D(0,1,0),
                 new Point3D(1,0,0)).
-                setEmission(new Color(30, 30, 30)).
+                setEmission(new Color(82, 42, 2)).
                 setMaterial(new Material().setKd(0.4).setKs(0.8).setShininess(60)));
 
         //balls
-        scene._geometries.add(new Sphere(130,new Point3D(-280, 400, 130)).
+        scene._geometries.add(new Sphere(80,new Point3D(-250, 400, 80)).
                 setEmission(new Color(java.awt.Color.RED)).
-                setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4).setKGlossy(90)));
+                setMaterial(new Material().setKs(0.4).setShininess(20).setKd(0.4)));
+                //setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4).setKGlossy(90)));
         scene._geometries.add(new Sphere(20,new Point3D(30, -150, 20)).
                 setEmission(new Color(java.awt.Color.RED)).
-                setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4).setKGlossy(85)));
+                setMaterial(new Material().setKs(0.4).setShininess(20).setKd(0.4)));
+                //setMaterial(new Material().setKr(1).setKs(0.4).setShininess(20).setKd(0.4).setKGlossy(85)));
+
+        //hanukia
+        Point3D p=new Point3D(175,20,0);
+        Point3D[][] hannukia=cube(p,new Vector(0,-100,0),new Vector(-10,0,0),new Vector(0,0,10));
+        scene._geometries.add(new Polygon(hannukia[0][0],hannukia[0][1],hannukia[0][2],hannukia[0][3]).setEmission(new Color(java.awt.Color.GRAY)));
+        scene._geometries.add(new Polygon(hannukia[1][0],hannukia[1][1],hannukia[1][2],hannukia[1][3]).setEmission(new Color(java.awt.Color.GRAY)));
+        scene._geometries.add(new Polygon(hannukia[2][0],hannukia[2][1],hannukia[2][2],hannukia[2][3]).setEmission(new Color(java.awt.Color.GRAY)));
+        scene._geometries.add(new Polygon(hannukia[3][0],hannukia[3][1],hannukia[3][2],hannukia[3][3]).setEmission(new Color(java.awt.Color.GRAY)));
+        scene._geometries.add(new Polygon(hannukia[4][0],hannukia[4][1],hannukia[4][2],hannukia[4][3]).setEmission(new Color(java.awt.Color.GRAY)));
+        scene._geometries.add(new Polygon(hannukia[5][0],hannukia[5][1],hannukia[5][2],hannukia[5][3]).setEmission(new Color(java.awt.Color.GRAY)));
+
+        Point3D p1=new Point3D(171,18,10);
+        Point3D[][] candle=cube(p1,new Vector(0,-4,0),new Vector(-2,0,0),new Vector(0,0,15));
+        scene._geometries.add(new Polygon(candle[0][0],candle[0][1],candle[0][2],candle[0][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(candle[1][0],candle[1][1],candle[1][2],candle[1][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(candle[2][0],candle[2][1],candle[2][2],candle[2][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(candle[3][0],candle[3][1],candle[3][2],candle[3][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(candle[4][0],candle[4][1],candle[4][2],candle[4][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(candle[5][0],candle[5][1],candle[5][2],candle[5][3]).setEmission(new Color(java.awt.Color.BLUE)));
+
+        Point3D[][] candle2=moveCube(candle,new Vector(0,-12,0),null);
+        scene._geometries.add(new Polygon(candle2[0][0],candle2[0][1],candle2[0][2],candle2[0][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(candle2[1][0],candle2[1][1],candle2[1][2],candle2[1][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(candle2[2][0],candle2[2][1],candle2[2][2],candle2[2][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(candle2[3][0],candle2[3][1],candle2[3][2],candle2[3][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(candle2[4][0],candle2[4][1],candle2[4][2],candle2[4][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(candle2[5][0],candle2[5][1],candle2[5][2],candle2[5][3]).setEmission(new Color(java.awt.Color.RED)));
+
+        Point3D[][] candle3=moveCube(candle,new Vector(0,-12,0),null);
+        scene._geometries.add(new Polygon(candle3[0][0],candle3[0][1],candle3[0][2],candle3[0][3]).setEmission(new Color(java.awt.Color.PINK)));
+        scene._geometries.add(new Polygon(candle3[1][0],candle3[1][1],candle3[1][2],candle3[1][3]).setEmission(new Color(java.awt.Color.PINK)));
+        scene._geometries.add(new Polygon(candle3[2][0],candle3[2][1],candle3[2][2],candle3[2][3]).setEmission(new Color(java.awt.Color.PINK)));
+        scene._geometries.add(new Polygon(candle3[3][0],candle3[3][1],candle3[3][2],candle3[3][3]).setEmission(new Color(java.awt.Color.PINK)));
+        scene._geometries.add(new Polygon(candle3[4][0],candle3[4][1],candle3[4][2],candle3[4][3]).setEmission(new Color(java.awt.Color.PINK)));
+        scene._geometries.add(new Polygon(candle3[5][0],candle3[5][1],candle3[5][2],candle3[5][3]).setEmission(new Color(java.awt.Color.PINK)));
+
+        Point3D p2=new Point3D(171,-74,10);
+        Point3D[][] shamash=cube(p2,new Vector(0,-4,0),new Vector(-2,0,0),new Vector(0,0,20));
+        scene._geometries.add(new Polygon(shamash[0][0],shamash[0][1],shamash[0][2],shamash[0][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(shamash[1][0],shamash[1][1],shamash[1][2],shamash[1][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(shamash[2][0],shamash[2][1],shamash[2][2],shamash[2][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(shamash[3][0],shamash[3][1],shamash[3][2],shamash[3][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(shamash[4][0],shamash[4][1],shamash[4][2],shamash[4][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(shamash[5][0],shamash[5][1],shamash[5][2],shamash[5][3]).setEmission(new Color(java.awt.Color.RED)));
+
+        scene._geometries.add(new Sphere(2,new Point3D(169, -75.5, 32)).
+                setEmission(new Color(java.awt.Color.YELLOW)).
+                setMaterial(new Material().setKs(0.4).setShininess(20).setKd(0.4)));
+        scene._geometries.add(new Sphere(2,new Point3D(169,17,27)).
+                setEmission(new Color(java.awt.Color.YELLOW)).
+                setMaterial(new Material().setKs(0.4).setShininess(20).setKd(0.4)));
+        scene._geometries.add(new Sphere(2,new Point3D(169,5,27)).
+                setEmission(new Color(java.awt.Color.YELLOW)).
+                setMaterial(new Material().setKs(0.4).setShininess(20).setKd(0.4)));
+        scene._geometries.add(new Sphere(2,new Point3D(169,-7,27)).
+                setEmission(new Color(java.awt.Color.YELLOW)).
+                setMaterial(new Material().setKs(0.4).setShininess(20).setKd(0.4)));
+
+        scene._geometries.add(new Plane(new Point3D(-700,0,0),new Point3D(0,700,0),new Point3D(-350,350,1)).setEmission(new Color(20,20,20)).setMaterial(new Material().setKr(1).setKGlossy(90)));
+
+
 
 
 
@@ -348,11 +414,12 @@ public class ReflectionRefractionTests {
         scene._lights.add( //
                 new DirectionalLight(new Color(java.awt.Color.BLUE), new Vector(new Point3D(0, -1, -2))));
 
-        ImageWriter imageWriter = new ImageWriter("imageToTargil8Glossy1", 1000, 1000);
+        ImageWriter imageWriter = new ImageWriter("testtestGlossy111", 1000, 1000);
         Render render = new Render() //
                 .setImageWriter(imageWriter) //
                 .setCamera(camera) //
-                .setRayTracer(new BasicRayTracer(scene));
+                .setRayTracer(new BasicRayTracer(scene).setAdaptiveSuperSampling(true));
+        render.setDebugPrint();
         render.setMultithreading(3);
         render.renderImage();
         render.writeToImage();
@@ -385,7 +452,7 @@ public class ReflectionRefractionTests {
         scene._lights.add( //
                 new DirectionalLight(new Color(java.awt.Color.BLUE), new Vector(new Point3D(0, -1, -2))));
 
-        ImageWriter imageWriter = new ImageWriter("testDiffusedGlass11", 1000, 1000);
+        ImageWriter imageWriter = new ImageWriter("testDiffusedGlass11", 500, 500);
         Render render = new Render() //
                 .setImageWriter(imageWriter) //
                 .setCamera(camera) //
@@ -394,6 +461,118 @@ public class ReflectionRefractionTests {
         render.setMultithreading(3);
         render.renderImage();
         render.writeToImage();
+
+    }
+
+
+    @Test
+    public void targil9() {
+
+        Scene scene = new Scene("Test scene")
+                .setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
+        Camera camera = new Camera(new Point3D(-95, -150, 90), new Vector(0, 1, 0), new Vector(0, 0, 1)) //
+                .setViewPlaneSize(250, 250).setDistance(120);
+
+        Point3D p=new Point3D(-50,0,0);
+        Point3D[][] forwardRightLeg=cube(p,new Vector(-5,0,0),new Vector(0,5,0),new Vector(0,0,10));
+        scene._geometries.add(new Polygon(forwardRightLeg[0][0],forwardRightLeg[0][1],forwardRightLeg[0][2],forwardRightLeg[0][3]).setEmission(new Color(java.awt.Color.ORANGE)));
+        scene._geometries.add(new Polygon(forwardRightLeg[1][0],forwardRightLeg[1][1],forwardRightLeg[1][2],forwardRightLeg[1][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(forwardRightLeg[2][0],forwardRightLeg[2][1],forwardRightLeg[2][2],forwardRightLeg[2][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(forwardRightLeg[3][0],forwardRightLeg[3][1],forwardRightLeg[3][2],forwardRightLeg[3][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(forwardRightLeg[4][0],forwardRightLeg[4][1],forwardRightLeg[4][2],forwardRightLeg[4][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(forwardRightLeg[5][0],forwardRightLeg[5][1],forwardRightLeg[5][2],forwardRightLeg[5][3]).setEmission(new Color(java.awt.Color.RED)));
+
+        Point3D[][] forwardLeftLeg=moveCube(forwardRightLeg,null,new Vector(-120,0,0));
+        scene._geometries.add(new Polygon(forwardLeftLeg[1][0],forwardLeftLeg[1][1],forwardLeftLeg[1][2],forwardLeftLeg[1][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(forwardLeftLeg[0][0],forwardLeftLeg[0][1],forwardLeftLeg[0][2],forwardLeftLeg[0][3]).setEmission(new Color(java.awt.Color.ORANGE)));
+        scene._geometries.add(new Polygon(forwardLeftLeg[2][0],forwardLeftLeg[2][1],forwardLeftLeg[2][2],forwardLeftLeg[2][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(forwardLeftLeg[3][0],forwardLeftLeg[3][1],forwardLeftLeg[3][2],forwardLeftLeg[3][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(forwardLeftLeg[4][0],forwardLeftLeg[4][1],forwardLeftLeg[4][2],forwardLeftLeg[4][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(forwardLeftLeg[5][0],forwardLeftLeg[5][1],forwardLeftLeg[5][2],forwardLeftLeg[5][3]).setEmission(new Color(java.awt.Color.RED)));
+
+        Point3D[][] frontLeftLeg=moveCube(forwardLeftLeg,new Vector(0,-60,0),new Vector(-5,0,0));
+        scene._geometries.add(new Polygon(frontLeftLeg[1][0],frontLeftLeg[1][1],frontLeftLeg[1][2],frontLeftLeg[1][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(frontLeftLeg[0][0],frontLeftLeg[0][1],frontLeftLeg[0][2],frontLeftLeg[0][3]).setEmission(new Color(java.awt.Color.ORANGE)));
+        scene._geometries.add(new Polygon(frontLeftLeg[2][0],frontLeftLeg[2][1],frontLeftLeg[2][2],frontLeftLeg[2][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(frontLeftLeg[3][0],frontLeftLeg[3][1],frontLeftLeg[3][2],frontLeftLeg[3][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(frontLeftLeg[4][0],frontLeftLeg[4][1],frontLeftLeg[4][2],frontLeftLeg[4][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(frontLeftLeg[5][0],frontLeftLeg[5][1],frontLeftLeg[5][2],frontLeftLeg[5][3]).setEmission(new Color(java.awt.Color.RED)));
+
+        Point3D[][] frontRightLeg=moveCube(frontLeftLeg,null,new Vector(130,0,0));
+        scene._geometries.add(new Polygon(frontRightLeg[1][0],frontRightLeg[1][1],frontRightLeg[1][2],frontRightLeg[1][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(frontRightLeg[0][0],frontRightLeg[0][1],frontRightLeg[0][2],frontRightLeg[0][3]).setEmission(new Color(java.awt.Color.ORANGE)));
+        scene._geometries.add(new Polygon(frontRightLeg[2][0],frontRightLeg[2][1],frontRightLeg[2][2],frontRightLeg[2][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(frontRightLeg[3][0],frontRightLeg[3][1],frontRightLeg[3][2],frontRightLeg[3][3]).setEmission(new Color(java.awt.Color.BLUE)));
+        scene._geometries.add(new Polygon(frontRightLeg[4][0],frontRightLeg[4][1],frontRightLeg[4][2],frontRightLeg[4][3]).setEmission(new Color(java.awt.Color.RED)));
+        scene._geometries.add(new Polygon(frontRightLeg[5][0],frontRightLeg[5][1],frontRightLeg[5][2],frontRightLeg[5][3]).setEmission(new Color(java.awt.Color.RED)));
+
+
+
+        scene._lights.add( //
+                new DirectionalLight(new Color(246, 250, 209), new Vector(new Point3D(0, 1, -1))));
+        scene._lights.add(new SpotLight(new Color(148, 228, 233), new Point3D(60, 0, 0), new Vector(-39.883192952952413, -13.862502322740898, 0)) //
+                .setKl(0.001).setKq(0.001));
+        scene._lights.add( //
+                new DirectionalLight(new Color(java.awt.Color.BLUE), new Vector(new Point3D(0, -1, -2))));
+
+        ImageWriter imageWriter = new ImageWriter("testtest", 500, 500);
+        Render render = new Render() //
+                .setImageWriter(imageWriter) //
+                .setCamera(camera) //
+                .setRayTracer(new BasicRayTracer(scene));
+        render.setDebugPrint();
+        render.setMultithreading(3);
+        render.renderImage();
+        render.writeToImage();
+
+    }
+
+    private Point3D[][]cube(Point3D baseBottomRight,Vector left,Vector forward,Vector up) {
+
+        Point3D A = baseBottomRight;
+        Point3D B = baseBottomRight.add(forward);
+        Point3D C = B.add(left);
+        Point3D D = A.add(left);
+
+        Point3D E = A.add(up);
+        Point3D F = B.add(up);
+        Point3D G = C.add(up);
+        Point3D H = D.add(up);
+
+        Point3D[][] points = {
+                {A, B, C, D},//base
+                {E, F, G, H},//top
+                {A, E, F, B},//right
+                {D, H, G, C},//left
+                {A, E, H, D},//back
+                {B, F, G, C}//front
+        };
+
+        return points;
+
+    }
+
+    private Point3D[][] moveCube(Point3D[][]cube,Vector forward,Vector left){
+
+        Point3D[][]moved=cube;
+        Vector move;
+        if(forward !=null){
+            move=forward;
+            if(left!=null){
+                move=move.add(left);
+            }
+        }
+        else{
+            move=left;
+        }
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 4; j++) {
+                moved[i][j] = moved[i][j].add(move);
+            }
+        }
+        return moved;
+
+
 
     }
 

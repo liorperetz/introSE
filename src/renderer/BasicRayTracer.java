@@ -1,6 +1,5 @@
 package renderer;
 
-import elements.Camera;
 import elements.LightSource;
 import geometries.Intersectable.GeoPoint;
 import primitives.*;
@@ -35,15 +34,15 @@ public class BasicRayTracer extends RayTracerBase {
     /**
      * desired amount of rays in a beam
      */
-    private static final int AMOUNT_OF_RAYS = 81;
+    private static final int AMOUNT_OF_RAYS = 1089;
     /**
      * adaptive supersampling switch
      */
-    boolean adaptiveSupersampling=true;
+    boolean adaptiveSuperSampling;
     /**
-     * recursion max depth
+     * adaptive super sampling recursion max depth
      */
-    int level=6;
+    private static final int MAX_SUPER_SAMPLING_LEVEL = 6;
     /**
      * BasicRayTracer constructor
      *
@@ -51,6 +50,16 @@ public class BasicRayTracer extends RayTracerBase {
      */
     public BasicRayTracer(Scene scene) {
         super(scene);
+    }
+
+    /**
+     * adaptive super sampling switch
+     * @param adaptiveSuperSampling  true to turn on adaptiveSuperSampling feature
+     * @return current BasicRayTracer instance
+     */
+    public BasicRayTracer setAdaptiveSuperSampling(boolean adaptiveSuperSampling) {
+        this.adaptiveSuperSampling = adaptiveSuperSampling;
+        return this;
     }
 
     /**
@@ -214,25 +223,42 @@ public class BasicRayTracer extends RayTracerBase {
         double scatteringWidth = 100 - kGlossyOrClear;//scatteringWidth determines the edge's length of the
                                                      // target surface the rays are sent to.
                                                     // the more glossy and clear the material is, the rays less scatters.
-       //building a target surface to which rays will be sent
+        //building a target surface to which rays will be sent
+        TargetSurface targetSurface=new TargetSurface(r,_upVector.normalize(),scatteringWidth*2);
+
+        //reflection/refraction ray parameters
         Point3D p0 = r.getP0();
         Vector rVector = r.getDir();
-        //calculate the directions vectors of the target surface
-        Vector right = rVector.crossProduct(_upVector.normalize());
-        Vector up = right.crossProduct(rVector).normalize();
+
         rVector = rVector.scale(100);//Set the target surface at a distance of 100 from the starting point
 
-        //get from p0 to the up left vertex of the target surface
-        Point3D center = p0.add(rVector);
-        Point3D upLeftCorner = center.add(up.scale(scatteringWidth).add(right.scale(-scatteringWidth)));
+        if(adaptiveSuperSampling){
+            //use adaptive super sampling
+            return adaptiveSuperSampling(kx,kkx,level,p0,targetSurface);
+        }
+        //don't use adaptive super sampling
+        return colorFromRegularBeam(rVector,level,kx,kkx,p0,n,targetSurface);
+    }
+
+    /**
+     * calculate the color of reflection/refraction ray
+     * to glossy surfaces/diffused glass when adaptive super sampling is not activated
+     * @param rVector reflection/refraction vector
+     * @param level reflection/refraction recursion depth
+     * @param kx either transparency or reflection coefficient of the current calculated geometry
+     * @param kkx either transparency or reflection coefficient from the last recursion level
+     * @param p0 source point of the reflection/refraction ray
+     * @param n normal to the geoPoint
+     * @param targetSurface ray's target surface
+     * @return
+     */
+    private Color colorFromRegularBeam(Vector rVector, int level, double kx, double kkx, Point3D p0, Vector n,TargetSurface targetSurface){
 
         //calculate the actual amount of rays (must have an integer square root)
         int squaresPerEdge = (int) Math.sqrt(AMOUNT_OF_RAYS);
         int sumOfRays = squaresPerEdge * squaresPerEdge;
-       //length of each square in the grid of the target plane
-        double squareLength = (scatteringWidth * 2) / squaresPerEdge;
-
-        Vector down = up.scale(-1);
+        //length of each square in the grid of the target plane
+        double squareLength = (targetSurface.getEdgeLen()) / squaresPerEdge;
         Color color = Color.BLACK;
         //divide the target surface to squared grid
         //and send random ray to each square in it
@@ -243,9 +269,9 @@ public class BasicRayTracer extends RayTracerBase {
                 //and create ray from p0 to it
                 double randomRightToScale = ThreadLocalRandom.current().nextDouble(0, squareLength);
                 double randomDownToScale = ThreadLocalRandom.current().nextDouble(0, squareLength);
-                Vector randomVector = right.scale(randomRightToScale + j * squareLength).
-                        add(down.scale(randomDownToScale + i * squareLength));
-                Point3D randomPoint = upLeftCorner.add(randomVector);
+                Vector randomVector = targetSurface.getRight().scale(randomRightToScale + j * squareLength).
+                        add(targetSurface.getDown().scale(randomDownToScale + i * squareLength));
+                Point3D randomPoint = targetSurface.getTopLeftPoint().add(randomVector);
                 Vector randomRayDir = randomPoint.subtract(p0);
 
                 //if the ray does not pass the surface to the other side
@@ -259,81 +285,169 @@ public class BasicRayTracer extends RayTracerBase {
             }
         }
         return color.reduce(sumOfRays);//average color from all rays
+
     }
 
-    private Color adaptiveSupersampling(Vector down,Vector right,double edgeLen){
-
-        int colorMatrixDimension=(int)Math.pow(2,level-1);
+    /**
+     * calculate the color of reflection/refraction using adaptive super sampling
+     * wrapper to recursive method
+     * @param kx either transparency or reflection coefficient of the current calculated geometry
+     * @param kkx either transparency or reflection coefficient from the last recursion level
+     * @param level reflection/refraction recursion depth
+     * @param p0 source point of the reflection/refraction ray
+     * @param targetSurface ray's target surface
+     * @return color of the the reflection/refraction source point
+     */
+    private Color adaptiveSuperSampling(double kx, double kkx, int level, Point3D p0, TargetSurface targetSurface){
+        //create and initialize colors matrix. used to reduce redundant calculations
+        int colorMatrixDimension=(int)Math.pow(2,MAX_SUPER_SAMPLING_LEVEL-1)+1;//(colorMatrixDimension)^2 is maximum samples number
         Color[][]colors=new Color[colorMatrixDimension][colorMatrixDimension];
+        //initialize to null
         for (int i = 0; i <colorMatrixDimension ; i++) {
             for (int j = 0; j < colorMatrixDimension; j++) {
                 colors[i][j]=null;
             }
         }
+        //edge's length of each square in the target surface (depends recursive max depth)
+        double squareLen=targetSurface.getEdgeLen()/(colorMatrixDimension-1);
+        targetSurface.setSquareLen(squareLen);
 
-        Tuple topLeft=new Tuple(0,0);
-        Tuple topRight=new Tuple(0,colorMatrixDimension-1);
-        Tuple bottomLeft=new Tuple(colorMatrixDimension-1,0);
-        Tuple bottomRight=new Tuple(colorMatrixDimension-1,colorMatrixDimension-1);
-        Color color=Color.BLACK;
-        return adaptiveSupersampling(colors,level,topLeft,topRight,bottomLeft, bottomRight,color);
+        //first recursive call. send the indexes of the four vertexes of the target surface
+        Index2D topLeft=new Index2D(0,0);
+        Index2D topRight=new Index2D(0,colorMatrixDimension-1);
+        Index2D bottomLeft=new Index2D(colorMatrixDimension-1,0);
+        Index2D bottomRight=new Index2D(colorMatrixDimension-1,colorMatrixDimension-1);
+        return adaptiveSuperSampling(colors,MAX_SUPER_SAMPLING_LEVEL,topLeft,topRight,bottomLeft, bottomRight,kx,kkx, level,p0,targetSurface);
 
     }
 
-    class Tuple{
+    /**
+     * Index2D is an internal helper class
+     * representing a 2D index (x,y) in a matrix
+     */
+    private class Index2D {
+        /**
+         * rows index
+         */
        private int _x;
+        /**
+         * column index
+         */
        private int _y;
-       public Tuple(int x,int y){
+
+        /**
+         * Index2D constructor
+         * @param x row index
+         * @param y column index
+         */
+       public Index2D(int x, int y){
             _x=x;
             _y=y;
         }
-       public int getX(){
-           return _x;
-       }
-       public int getY(){
-           return _y;
-       }
     }
 
-    private Color adaptiveSupersampling(Color[][] colors,int level,Tuple topLeft,Tuple topRight,Tuple bottomLeft, Tuple bottomRight,Color color ){
+    /**
+     * calculate recursively, using adaptive super sampling, the average color of the
+     * target surface for glossy surfaces/diffused glass
+     * reflection
+     * @param colors matrix of calculated colors
+     * @param superSamplingLevel super sampling recursion depth
+     * @param topLeft Index (in colors) of the top left vertex in the square
+     * @param topRight Index (in colors) of the top right vertex in the square
+     * @param bottomLeft Index (in colors) of the bottom left vertex in the square
+     * @param bottomRight Index (in colors) of the bottom right vertex in the square
+     * @param kx either transparency or reflection coefficient of the current calculated geometry
+     * @param kkx either transparency or reflection coefficient from the last recursion level
+     * @param level reflection/refraction recursion depth
+     * @param p0 source point of the reflection/refraction ray
+     * @param targetSurface ray's target surface
+     * @return color of the the reflection/refraction source point
+     */
+    private Color adaptiveSuperSampling(Color[][] colors, int superSamplingLevel, Index2D topLeft, Index2D topRight, Index2D bottomLeft, Index2D bottomRight, double kx, double kkx, int level, Point3D p0, TargetSurface targetSurface){
+        Color color=Color.BLACK;//basic natural color
+
+        //try to get colors of the vertexes from the colors array (get null if the don't exist yet)
         Color colorTopLeft=colors[topLeft._x][topLeft._y];
         Color colorTopRight=colors[topRight._x][topRight._y];
         Color colorBottomLeft=colors[bottomLeft._x][bottomLeft._y];
-        Color colorBottomRight=colors[topRight._x][topRight._y];
+        Color colorBottomRight=colors[bottomRight._x][bottomRight._y];
+
+        //if the color does not exist in the color's array then calculate it and save it in the array
         if(colorBottomRight==null){
-            //calccolor
+            colorBottomRight= calcColor(p0,targetSurface,bottomRight,level,kx,kkx);
+            colors[bottomRight._x][bottomRight._y]=colorBottomRight;
         }
         if(colorBottomLeft==null){
-            //calccolor
+            colorBottomLeft= calcColor(p0,targetSurface,bottomLeft,level,kx,kkx);
+            colors[bottomLeft._x][bottomLeft._y]=colorBottomLeft;
         }
         if(colorTopRight==null){
-//calccolor
+            colorTopRight= calcColor(p0,targetSurface,topRight,level,kx,kkx);
+            colors[topRight._x][topRight._y]=colorTopRight;
         }
-        if(colorTopRight==null){
-//calccolor
+        if(colorTopLeft==null){
+            colorTopLeft= calcColor(p0,targetSurface,topLeft,level,kx,kkx);
+            colorTopLeft=colors[topLeft._x][topLeft._y]=colorTopLeft;
         }
 
+        //if the 4 colors are similar return their average
         if(colorBottomRight.equals(colorBottomLeft)&&
                 colorBottomLeft.equals(colorTopRight)&&
                 colorTopRight.equals(colorTopLeft)){
             return colorBottomRight.add(colorBottomLeft,colorTopRight,colorTopLeft).reduce(4);
         }
 
+        //if the colors are not similar sample smaller area as long as the superSamplingLevel bigger then 1
+        if(superSamplingLevel>=1) {
 
-        Tuple middleTop=new Tuple(topLeft._x,(topLeft._y+topRight._y)/2);
-        Tuple middleRight=new Tuple((topRight._x+bottomRight._x)/2,topRight._y);
-        Tuple middleLeft=new Tuple((topLeft._x+bottomLeft._x)/2,topLeft._y);
-        Tuple middlebottom=new Tuple(bottomLeft._x,(bottomLeft._y+bottomRight._y)/2);
-        Tuple center= new Tuple((topLeft._x+bottomLeft._x)/2,(topLeft._y+topRight._y)/2);
-        color=color.add(adaptiveSupersampling(colors,level-1,topLeft, middleTop, middleLeft, center,color));
-        color=color.add(adaptiveSupersampling(colors,level-1,middleLeft,topRight,center,middleRight,color));
-        color=color.add(adaptiveSupersampling(colors,level-1,middleLeft,center,bottomLeft,middlebottom,color));
-        color=color.add(adaptiveSupersampling(colors,level-1,center,middleRight,middlebottom,bottomRight,color));
+            //indexes of each middle edge and central point
+            Index2D middleTop = new Index2D(topLeft._x, (topLeft._y + topRight._y) / 2);
+            Index2D middleRight = new Index2D((topRight._x + bottomRight._x) / 2, topRight._y);
+            Index2D middleLeft = new Index2D((topLeft._x + bottomLeft._x) / 2, topLeft._y);
+            Index2D middleBottom = new Index2D(bottomLeft._x, (bottomLeft._y + bottomRight._y) / 2);
+            Index2D center = new Index2D((topLeft._x + bottomLeft._x) / 2, (topLeft._y + topRight._y) / 2);
 
-        return color.reduce(4);
+            //4 recursive calls, each one to quarter square. decreasing the recursive level by 1
+            color = color.add(adaptiveSuperSampling(colors, superSamplingLevel - 1, topLeft, middleTop, middleLeft, center, kx, kkx, level, p0,targetSurface));
+            color = color.add(adaptiveSuperSampling(colors, superSamplingLevel - 1, middleTop, topRight, center, middleRight, kx, kkx, level, p0,targetSurface));
+            color = color.add(adaptiveSuperSampling(colors, superSamplingLevel - 1, middleLeft, center, bottomLeft, middleBottom, kx, kkx, level, p0,targetSurface));
+            color = color.add(adaptiveSuperSampling(colors, superSamplingLevel - 1, center, middleRight, middleBottom, bottomRight, kx, kkx, level, p0,targetSurface));
+            //return the average color
+            return color.reduce(4);
+        }
+        //return the average color of the 4 vertexes
+        return colorBottomLeft.add(colorBottomRight,colorTopRight,colorTopLeft).reduce(4);
+
     }
 
 
+    /**
+     * invoking calcGlobalEffect to point on the target surface of glossy/diffused
+     * @param p0 source point of the reflection/refraction ray
+     * @param targetSurface ray's target surface
+     * @param index index in the color's array
+     * @param level reflection/refraction recursion depth
+     * @param kx either transparency or reflection coefficient of the current calculated geometry
+     * @param kkx kkx either transparency or reflection coefficient from the last recursion level
+     * @return color of the point on the target surface
+     */
+    public Color calcColor(Point3D p0,TargetSurface targetSurface, Index2D index, int level, double kx, double kkx){
+
+        //get from the top left corner vertex of the target surface to
+        //the target point and use calcGlobalEffect to calc the color
+        Point3D targetPoint=targetSurface.getTopLeftPoint();
+        if(index._y>0){
+            //add scaled right vector
+            targetPoint=targetPoint.add(targetSurface.getRight().scale(index._y*targetSurface.getSquareLen()));
+        }
+        if(index._x>0){
+            //add scales down vector
+            targetPoint=targetPoint.add(targetSurface.getDown().scale(index._x*targetSurface.getSquareLen()));
+        }
+        Ray ray=new Ray(p0,targetPoint.subtract(p0));
+        return calcGlobalEffect(ray,level,kx,kkx);
+
+    }
 
     /**
      * calculate color's local effects (diffusive and shininess)
