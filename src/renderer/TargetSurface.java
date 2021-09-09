@@ -34,6 +34,12 @@ public class TargetSurface {
      */
     private  Vector _down;
 
+    /**
+     * TargetSurface constructor
+     * @param ray reflection/refraction ray
+     * @param upVector up vector of the view plane
+     * @param edgeLen length of the target surface edge
+     */
     public TargetSurface(Ray ray,Vector upVector,double edgeLen ) {
         //calculate the directions vectors of the target surface
          _right = ray.getDir().crossProduct(upVector.normalize());
@@ -86,7 +92,7 @@ public class TargetSurface {
 
     /**
      * squareLen setter
-     * @param squareLen
+     * @param squareLen length of each square in the target surface
      */
     public void setSquareLen(double squareLen) {
         this._squareLen = squareLen;
